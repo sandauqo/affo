@@ -1,0 +1,82 @@
+{
+	"100": {
+		"name": "Mobile controls",
+		"needReload": true,
+		"values": {
+			"1": {
+				"name": "Only on mobile"
+			},
+			"2": {
+				"name": "Always"
+			},
+			"3": {
+				"name": "Never"
+			}
+		},
+		"default": 1
+	},
+	"101": {
+		"name": "Occupation position",
+		"needReload": true,
+		"values": {
+			"1": {
+				"name": "Responsive",
+				"cssPref": "ffo-pref-occpos-responsive"
+			},
+			"2": {
+				"name": "Below player board",
+				"cssPref": "ffo-pref-occpos-below"
+			}
+		},
+		"default": 1
+	},
+	"102": {
+		"name": "Player board layout",
+		"needReload": true,
+		"values": {
+			"1": {
+				"name": "Individual view",
+				"cssPref": "ffo-pref-single-view"
+			},
+			"2": {
+				"name": "Multiple view",
+				"cssPref": "ffo-pref-multi-view"
+			}
+		},
+		"default": 1
+	},
+	"103": {
+		"name": "Background",
+		"needReload": true,
+		"values": {
+			"1": {
+				"name": "Mountain",
+				"cssPref": "ffo-pref-background"
+			},
+			"2": {
+				"name": "Plain",
+				"cssPref": "ffo-pref-no-background"
+			}
+		},
+		"default": 1
+	},
+	"104": {
+		"name": "Boards layout",
+		"needReload": true,
+		"values": {
+			"1": {
+				"name": "Side by side",
+				"cssPref": "ffo-pref-layout-side-by-side"
+			},
+			"2": {
+				"name": "Vertical",
+				"cssPref": "ffo-pref-layout-vertical"
+			},
+			"3": {
+				"name": "Responsive",
+				"cssPref": "ffo-pref-layout-responsive"
+			}
+		},
+		"default": 3
+	}
+}

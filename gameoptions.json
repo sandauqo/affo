@@ -1,0 +1,218 @@
+{
+	"100":
+	{
+		"name": "Game length",
+		"values":
+		{
+			"1":
+			{
+				"name": "Long game"
+			},
+			"2":
+			{
+				"name": "Short game",
+				"nobeginner": true
+			}
+		},
+		"default": 1
+	},
+	"101":
+	{
+		"name": "Occupations",
+		"values":
+		{
+			"1":
+			{
+				"name": "A",
+				"firstgameonly": true
+			},
+			"2":
+			{
+				"name": "B"
+			},
+			"3":
+			{
+				"name": "C"
+			},
+			"4":
+			{
+				"name": "A and B"
+			},
+			"5":
+			{
+				"name": "A and C"
+			},
+			"6":
+			{
+				"name": "B and C"
+			},
+			"7":
+			{
+				"name": "A, B and C"
+			}
+		},
+		"default": 3
+	},
+	"102":
+	{
+		"name": "Mini expansion 1",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes",
+				"nobeginner": true
+			}
+		},
+		"default": 1
+	},
+	"112":
+	{
+		"name": "Mini expansion 2 (experimental, expect some bugs)",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes",
+				"nobeginner": true
+			}
+		},
+		"default": 1
+	},
+	"103":
+	{
+		"name": "Norwegians expansion",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes"
+			}
+		},
+		"default": 1
+	},
+	"104":
+	{
+		"name": "Play with all islands",
+		"description": "Always play with all Norwegians islands regardless of the number of players",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes"
+			}
+		},
+		"default": 1,
+		"displaycondition":[
+			{
+				"type": "otheroption",
+				"id": 103,
+				"value": [2]
+			}
+		]
+	},
+	"105":
+	{
+		"name": "Use mini expansion 2 occupation ban list",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes"
+			}
+		},
+		"default": 1
+	},
+	"106":
+	{
+		"name": "Use mini expansion 2 optional occupation ban list",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes"
+			}
+		},
+		"default": 1
+	},
+	"111":
+	{
+		"name": "\"Best of 2\" starting occupation",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes"
+			}
+		},
+		"default": 2,
+		"displaycondition":[
+			{
+				"type": "otheroption",
+				"id": 112,
+				"value": [1]
+			}
+		]
+	},
+	"108":
+	{
+		"name": "Confirm timer",
+		"values":
+		{
+			"1":
+			{
+				"name": "On"
+			},
+			"2":
+			{
+				"name": "Off"
+			}
+		},
+		"default": 1
+	},
+	"113":
+	{
+		"name": "Yule mini expansion",
+		"values":
+		{
+			"1":
+			{
+				"name": "No"
+			},
+			"2":
+			{
+				"name": "Yes",
+				"nobeginner": true
+			}
+		},
+		"default": 2
+	}
+}

@@ -1,0 +1,71 @@
+{
+  "table": {
+	"actions_taken": {
+	  "id": 10,
+	  "name": "Actions taken",
+	  "type": "int"
+	},
+	"starting_position_winner_2p": {
+	  "id": 11,
+	  "name": "Starting turn order of winner (2-player)",
+	  "type": "int"
+	},
+	"starting_position_winner_3p": {
+	  "id": 12,
+	  "name": "Starting turn order of winner (3-player)",
+	  "type": "int"
+	},
+	"starting_position_winner_4p": {
+	  "id": 13,
+	  "name": "Starting turn order of winner (4-player)",
+	  "type": "int"
+	}
+  },
+  "player": {
+	"actions_taken": {
+	  "id": 10,
+	  "name": "Actions taken",
+	  "type": "int"
+	},
+	"raid_pillage_actions_taken": {
+	  "id": 11,
+	  "name": "Raid and pillage actions taken",
+	  "type": "int"
+	},
+	"hunt_actions_taken": {
+	  "id": 12,
+	  "name": "Hunt actions taken",
+	  "type": "int"
+	},
+	"snare_actions_taken": {
+	  "id": 13,
+	  "name": "Snare actions taken",
+	  "type": "int"
+	},
+	"whaling_actions_taken": {
+	  "id": 14,
+	  "name": "Whaling actions taken",
+	  "type": "int"
+	},
+	"occupations_played": {
+	  "id": 15,
+	  "name": "Occupations played",
+	  "type": "int"
+	},
+	"points_occupations": {
+	  "id": 16,
+	  "name": "Points from occupations",
+	  "type": "int"
+	},
+	"points_boards": {
+	  "id": 17,
+	  "name": "Points from exploration boards",
+	  "type": "int"
+	},
+	"points_emigrations": {
+	  "id": 18,
+	  "name": "Points from emigrations",
+	  "type": "int"
+	}
+  }
+}

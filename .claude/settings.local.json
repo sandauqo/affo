@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($p = \\(Get-Command php -ErrorAction SilentlyContinue\\); if \\($p\\) { Write-Output \"php found: $\\($p.Source\\)\"; php -l \"C:\\\\Users\\\\Vykintas\\\\PhpstormProjects\\\\untitled\\\\modules\\\\player-actions\\\\selectMode.php\" } else { Write-Output \"php not on PATH\" })",
+      "PowerShell($f=\"C:\\\\Users\\\\Vykintas\\\\PhpstormProjects\\\\untitled\\\\modules\\\\player-actions\\\\selectMode.php\"; $n=\\(Get-Content $f | Measure-Object -Line\\).Lines; Write-Output \"total lines: $n\"; Get-Content $f -Tail 30)",
+      "mcp__phpstorm__get_php_project_config"
+    ]
+  }
+}
