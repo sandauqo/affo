@@ -46,7 +46,10 @@ trait Undo {
 		$this->setGameStateValue('num_vp_token_3_saved', $this->getGameStateValue('num_vp_token_3'));
 	}
 	
-	function saveOccupations( $player_id ) {
+	// Snapshots the whole occupation table (all players and the deck), so the
+	// restore can never mix up players, and keeps card ids stable.
+	// $player_id is kept for the existing callers; it no longer limits the snapshot.
+	function saveOccupations( $player_id = null ) {
 		if (! $this->getGameStateValue( 'undo_supported' ) || $this->getGameStateValue( 'undo_occupation' )) {
 			return;
 		}
@@ -54,8 +57,7 @@ trait Undo {
 		$this->setGameStateValue( 'undo_occupation', 1 );
 		self::DbQuery("DELETE FROM occupation_saved WHERE 1");
 		self::DbQuery("INSERT INTO occupation_saved
-		  SELECT * FROM occupation 
-		  WHERE player_id = $player_id");
+		  SELECT * FROM occupation");
 	}
 	
 	function saveWeapons() {
@@ -170,11 +172,9 @@ trait Undo {
 		// Restore state
 		
 		if ($this->getGameStateValue( 'undo_occupation' )) {
-			self::DbQuery("DELETE FROM occupation WHERE player_id = $player_id");
+			self::DbQuery("DELETE FROM occupation WHERE 1");
 			self::DbQuery("INSERT INTO occupation
-			  (deck, starter, ability, points, location, player_id, used)
-			  SELECT deck, starter, ability, points, location, player_id, used
-			  FROM occupation_saved");
+			  SELECT * FROM occupation_saved");
 		}
 		
 		if ($this->getGameStateValue( 'undo_weapon' )) {

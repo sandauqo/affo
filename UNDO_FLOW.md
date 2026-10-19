@@ -16,7 +16,7 @@ All eight shadow tables are defined in `dbmodel.sql`:
 |---|---|---|---|---|
 | `player` row (score, coin, wood, stone, ore, penalty, vp, goods, boards, ships, emigrations) | `player_saved` | `saveState` | none (always saved) | 1 row, active player |
 | `meeple` | `meeple_saved` | `saveState` | none | active player's rows only |
-| `occupation` | `occupation_saved` | `saveOccupations` | `undo_occupation` | **rows of the player passed to `saveOccupations()`** |
+| `occupation` | `occupation_saved` | `saveOccupations` | `undo_occupation` | all players and the deck |
 | `weapon` | `weapon_saved` | `saveWeapons` | `undo_weapon` | all players |
 | `forge` | `forge_saved` | `saveForge` | `undo_forge` | all |
 | `string_globals` | `string_globals_saved` | `saveStringGlobals` | `undo_string_globals` | all |
@@ -25,7 +25,7 @@ All eight shadow tables are defined in `dbmodel.sql`:
 
 Not stored in a table: `num_sheds`, `num_stonehouses`, `num_longhouses`, `num_vp_token_4` and `num_vp_token_3` are copied into the game state values `num_sheds_saved`, `num_stonehouses_saved`, `num_longhouses_saved`, `num_vp_token_4_saved` and `num_vp_token_3_saved`.
 
-Only `occupation_saved` mixes players and is restored without a `player_id` filter (see section 5). `player_saved` and `meeple_saved` are always written for the active player and restored with `WHERE player_id = ...`. The five whole-table shadows can't mix up players, but restoring them overwrites other players' changes if undo ever runs in a multi-active state.
+Only `weapon_saved`, `forge_saved`, `string_globals_saved`, `available_islands_saved`, `mountain_strips_saved` and `occupation_saved` hold whole tables. `player_saved` and `meeple_saved` are always written for the active player and restored with `WHERE player_id = ...`. Restoring a whole-table shadow overwrites other players' changes if undo ever runs in a multi-active state (it can't today).
 
 Other relevant game state values:
 - `undo_supported` (init 1): if 0 (games started before the feature), all save/restore is skipped or throws.
@@ -59,7 +59,7 @@ The other tables are saved lazily, just before the first mutation in the turn. E
 
 **Guard flag reset:** `stPickAction` (about lines 383-388 of `helper.state-functions.php`) sets `undo_occupation`, `undo_weapon`, `undo_forge`, `undo_string_globals`, `undo_islands` and `undo_mountain_strips` back to 0. This happens on every entry to `pickAction`, including the re-entry after an undo. A new turn or a restore therefore starts with "nothing saved in this turn" for the lazy tables.
 
-Note that `undo_occupation` is **not** initialised in `feastforodin.game.php` `setupNewGame` (lines 786-790 initialise weapon, forge, string_globals, islands and mountain_strips, but not occupation, which is declared at line 84).
+Note that `undo_occupation` is initialised to 0 in `setupNewGame` (`feastforodin.game.php`, line 785) like the other flags.
 
 ## 3. When undo is available
 
@@ -92,8 +92,8 @@ Client click -> `onUndo` (`ffo.action.js`) -> ajax `/feastforodin/feastforodin/u
 
 1. Throws if `undo_supported` is 0 or `can_undo` is 0.
 2. **Occupations**, only if `undo_occupation` = 1:
-   - `DELETE FROM occupation WHERE player_id = <undoing player>`
-   - `INSERT INTO occupation (deck, starter, ability, points, location, player_id, used) SELECT ... FROM occupation_saved`, with **no `player_id` filter** and **without `id`**.
+   - `DELETE FROM occupation WHERE 1`
+   - `INSERT INTO occupation SELECT * FROM occupation_saved` (all players, the deck and the original ids).
 3. Weapons, forge, string globals, mountain strips, islands: if the flag is 1, `DELETE ... WHERE 1`, then copy back everything from the shadow. For string globals, `undoComplexOcc(70)` and `undoComplexOcc(71)` run first. They put a moved special tile back on the source player's board and send an `updateBoards` notification.
 4. Meeples: `DELETE FROM meeple WHERE player_id = <player>`, then insert everything from `meeple_saved`.
 5. `DELETE FROM command_queue WHERE 1`.
@@ -115,15 +115,10 @@ Then `pickAction` is re-entered. It resets the lazy guard flags (see 2.2), calls
 
 ## 5. Known weaknesses
 
-These are the weak points, and the first one is the likely cause of the "own occupation cards doubled / opponent's cards disappeared" reports.
+### Fixed
+Occupation undo used to snapshot only one player's rows (the player passed to `saveOccupations()`) and restore without a `player_id` filter. If the snapshot belonged to another player, the undoing player's cards were deleted and the other player's cards were inserted a second time ("own cards doubled, opponent's disappeared"). Restore also dropped `id`, and cards drawn during the turn were never returned to the deck. `occupation_saved` now holds the **whole `occupation` table** and restore is a full `DELETE` plus `INSERT ... SELECT *`, so ids are kept and players can't be mixed up. Covered by `tests/UndoTest.php`.
 
-1. **`occupation_saved` is one global table keyed by whichever player saved first, but restore doesn't filter by player.**
-   - If the snapshot was taken for player X and player Y undoes, Y's rows are deleted and X's rows are inserted again. X's cards double and Y's cards vanish.
-   - When this can happen:
-     - `stDrawTwoBrown` loops over all players and calls `saveOccupations` for each. Only the first player's rows survive, because the flag is then set.
-     - `chooseBestOfTwoStartingOcc` runs in a multi-active state, so every player saves into the same shared table.
-     - `checkAsSoonAsOccs` saves for `$player["id"]`, which may not be the active player.
-2. `undo_occupation` has no initial value in `setupNewGame`.
-3. Restore omits `id`, so occupation rows get new auto-increment ids. Cards drawn during the undone turn are deleted and not returned to the deck.
-4. `weapon`, `forge`, `string_globals`, islands and strips are restored globally, so any other player's change to those tables since the snapshot would be lost. This is fine in single-active turns, but not in multi-active ones.
-5. The client `drawOccupation` and `playOccupation` handlers push without checking for an existing id.
+### Still open
+1. Undo is only reachable from `activeplayer` states (no `undo` in the `multipleactiveplayer` states), so the `saveOccupations` calls in `stDrawTwoBrown` and `chooseBestOfTwoStartingOcc` are never followed by an undo. They are harmless but pointless.
+2. `weapon`, `forge`, `string_globals`, islands and strips are restored globally, so any other player's change to those tables since the snapshot would be lost. This is fine in single-active turns.
+3. The client `drawOccupation` and `playOccupation` handlers push without checking for an existing id.
