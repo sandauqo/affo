@@ -30,6 +30,7 @@ class FakeUndoGame
         'num_vp_token_3_saved' => 0,
     ];
     public array $notifications = [];
+    public array $strings = [];
 
     private const PLAYER_COLS = "player_id INTEGER PRIMARY KEY, player_score INTEGER DEFAULT 0, player_score_aux INTEGER DEFAULT 0,
         coin INTEGER DEFAULT 0, wood INTEGER DEFAULT 0, stone INTEGER DEFAULT 0, ore INTEGER DEFAULT 0,
@@ -125,7 +126,17 @@ class FakeUndoGame
 
     public function getString($key)
     {
-        return '';
+        return $this->strings[$key] ?? '';
+    }
+
+    public function setString($key, $value)
+    {
+        $this->strings[$key] = $value;
+    }
+
+    public static function getDataGoods()
+    {
+        return require dirname(__DIR__, 2) . '/modules/data/goods.php';
     }
 
     public function updatePlayerScore($player, $a, $b)

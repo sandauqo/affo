@@ -63,9 +63,10 @@ class FfoPlayer
 
     public static function saveFullPlayer($player)
     {
-        $st = FeastForOdin::$pdo->prepare("UPDATE player SET coin = ?, wood = ?, stone = ?, ore = ?, ships = ?, emigrations = ? WHERE player_id = ?");
+        $st = FeastForOdin::$pdo->prepare("UPDATE player SET coin = ?, wood = ?, stone = ?, ore = ?, boards = ?, ships = ?, emigrations = ? WHERE player_id = ?");
         $st->execute([$player['coin'], $player['wood'], $player['stone'], $player['ore'],
-            json_encode(array_values($player['ships'])), json_encode($player['emigrations']), $player['id']]);
+            json_encode($player['boards']), json_encode(array_values($player['ships'])),
+            json_encode($player['emigrations']), $player['id']]);
     }
 
     public static function getEligibleIslands($player_id, $level)
