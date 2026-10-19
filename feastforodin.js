@@ -114,6 +114,7 @@ function (
 			this.onSelectArtisanShed = action.onSelectArtisanShed.bind(this);
         },
         mobileAndTabletCheck: function() {
+			console.log('mobileAndTabletCheck');
 			return window.matchMedia('(max-width: 700px), (any-pointer: coarse)').matches;
 		},
 		

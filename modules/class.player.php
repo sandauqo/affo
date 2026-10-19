@@ -48,7 +48,7 @@ class FfoPlayer {
 					$slot = $i + 1;
 					$values[] = "($player_id, 'feast', $slot)";
 				} else {
-					$values[] = "($player_id, 'thing', NULL)";
+					$values[] = "($player_id, 'thing', 0)";
 				}
 			}
 		}
