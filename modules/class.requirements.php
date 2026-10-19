@@ -129,6 +129,32 @@ class Requirements {
 			}
 		}
 
+		// Slaughter actions: modes map to animal types
+		$slaughterTypes = [85 => ['sheep'], 89 => ['horse', 'cattle'], 93 => ['sheep', 'horse', 'cattle']];
+		if (isset($slaughterTypes[$action_id])) {
+			$types = $slaughterTypes[$action_id];
+			if (isset($mode_id)) {
+				$types = isset($types[$mode_id]) ? [$types[$mode_id]] : [];
+			}
+			$hasAnimal = false;
+			foreach ($types as $type) {
+				if (FeastForOdin::canAfford($player, $type, 1) || FeastForOdin::canAfford($player, "pregnant$type", 1)) {
+					$hasAnimal = true;
+					break;
+				}
+			}
+			if (!$hasAnimal) {
+				if (count($types) == 1 && $types[0] == 'sheep') {
+					throw new BgaUserException( clienttranslate("You do not have any sheep to slaughter!") );
+				} else if (count($types) == 1 && $types[0] == 'horse') {
+					throw new BgaUserException( clienttranslate("You do not have any horses to slaughter!") );
+				} else if (count($types) == 1 && $types[0] == 'cattle') {
+					throw new BgaUserException( clienttranslate("You do not have any cattle to slaughter!") );
+				}
+				throw new BgaUserException( clienttranslate("You do not have any animals to slaughter!") );
+			}
+		}
+
 		// You must meet the requirements and costs of at least one of the actions
 		$met = false;
 		if (isset($mode_id)) {

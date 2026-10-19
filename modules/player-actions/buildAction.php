@@ -139,8 +139,11 @@ trait BuildAction {
 				throw new BgaUserException( clienttranslate("You do not have meeples in a space above or below") );
 			}
 			
-			// Must pay 1 coin
+			// Must meet the action's requirements before paying
 			$player = FfoPlayer::getFullPlayer( $player_id );
+			Requirements::check($action_id, $player);
+
+			// Must pay 1 coin
 			$this->spend($player, "coin", 1, "occupation-91");
 			FfoPlayer::saveFullPlayer($player);
 				

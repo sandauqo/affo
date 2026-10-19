@@ -523,7 +523,8 @@ class FeastForOdin extends Table
 		return $spent;
 	}
 	
-	public function lotsOfResources() {
+    #[Debug(reload: false)]
+    public function debug_lotsOfResources() {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$player["coin"] += 100;
@@ -533,35 +534,38 @@ class FeastForOdin extends Table
 		FfoPlayer::saveFullPlayer($player);
 	}
 	
-	public function givewood() {
+    #[Debug(reload: false)]
+    public function debug_givewood() {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$player["wood"] += 1;
 		FfoPlayer::saveFullPlayer($player);
 	}
 
-	public function givestone() {
+    #[Debug(reload: false)]
+    public function debug_givestone() {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$player["stone"] += 1;
 		FfoPlayer::saveFullPlayer($player);
 	}
 
-	public function giveore() {
+    #[Debug(reload: false)]
+    public function debug_giveore() {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$player["ore"] += 1;
 		FfoPlayer::saveFullPlayer($player);
 	}
 
-	public function givecoin() {
+	public function debug_givecoin() {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$player["coin"] += 1;
 		FfoPlayer::saveFullPlayer($player);
 	}
 
-	public function good($good) {
+	public function debug_good(string $good) {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		$data_goods = self::getDataGoods();
@@ -607,8 +611,9 @@ class FeastForOdin extends Table
 	public function callfn($fn) {
 		echo var_export(self::{$fn}(), true);
 	}
-	
-	public function occ($ability) {
+
+    #[Debug(reload: false)]
+    public function debug_occ(int $ability) {
 		$player_id = self::getActivePlayerId();
 			
 		$occupation = FeastForOdin::getObject( "SELECT * FROM occupation WHERE ability = '$ability' LIMIT 1" );
@@ -631,8 +636,9 @@ class FeastForOdin extends Table
 			'occupation' => $occupation
 		));
 	}
-	
-	public function pocc($ability) {
+
+    #[Debug(reload: false)]
+    public function debug_pocc(int $ability) {
 		$player_id = self::getActivePlayerId();
 			
 		$occupation = FeastForOdin::getObject( "SELECT * FROM occupation WHERE ability = '$ability' LIMIT 1" );
@@ -642,7 +648,8 @@ class FeastForOdin extends Table
 		('$ability', 'played', $player_id)" );
 	}
 	
-	public function docc($ability) {
+    #[Debug(reload: false)]
+    public function debug_docc(int $ability) {
 		FeastForOdin::DbQuery( "DELETE FROM occupation WHERE ability = '$ability'" );
 	}
 	

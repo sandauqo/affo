@@ -232,6 +232,11 @@ trait StateFunctions {
 				if (Occupation::has($player_id, 91)) {
 					// save player state here so undo works properly for latecomer
 					$this->saveState($player_id);
+					// Reset undo snapshots so stale ones from the previous turn are never restored
+					foreach (['undo_occupation', 'undo_weapon', 'undo_forge', 'undo_string_globals', 'undo_islands', 'undo_mountain_strips'] as $undoFlag) {
+						$this->setGameStateValue( $undoFlag, 0 );
+					}
+					$this->setCanUndo( 1 );
 					Action::push(["setplayer-$player_id", 'state-latecomer']);
 					break;
 				}

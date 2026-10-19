@@ -553,29 +553,6 @@ trait SelectMode {
 				}
 			}
 			
-			if (in_array($action_id, [89, 93])) {
-				//TODO: check if there is only one option, in that case slaughter immediatelly
-
-				if ($action_id == '89') {
-					$mode_id += 1;
-				}
-				if ($mode_id == 0) { //sheep
-					if (! self::canAfford( $player, "sheep", 1 ) && ! self::canAfford( $player, "pregnantsheep", 1 )) {
-						throw new BgaUserException( clienttranslate("You do not have any sheep to slaughter!") );
-					}
-				}
-				if ($mode_id == 1) { //horse
-					if (! self::canAfford( $player, "horse", 1 ) && ! self::canAfford( $player, "pregnanthorse", 1 )) {
-						throw new BgaUserException( clienttranslate("You do not have any horses to slaughter!") );
-					}
-				}
-				if ($mode_id == 2) { //cattle
-					if (! self::canAfford( $player, "cattle", 1 ) && ! self::canAfford( $player, "pregnantcattle", 1 )) {
-						throw new BgaUserException( clienttranslate("You do not have any cattle to slaughter!") );
-					}
-				}
-			}
-
 			$actions = array_merge($before_action, $mode->commands, $after_action);
 			Action::unshift($actions);
 		} 
