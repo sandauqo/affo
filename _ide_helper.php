@@ -313,6 +313,7 @@ namespace Bga\GameFramework {
         public TableStats $tableStats;
         public PlayerStats $playerStats;
         public Components\DeckFactory $deckFactory;
+        public Components\ItemManagerFactory $itemManagerFactory;
         public Components\Counters\CounterFactory $counterFactory;
         public Debug $debug;
         
@@ -477,6 +478,28 @@ namespace Bga\GameFramework {
         }
 
         /**
+         * Retrieve tournament information.
+         *
+         * Returns an empty array when the table is not part of a tournament.
+         *
+         * Note: `parent tournament` refer to the main tournament of Groups Stage tournaments (tournaments of either of the two stages, will reference the same "parent")
+         *
+         * @return array{
+         *   id?: int,
+         *   name?: string,
+         *   championship_name?: string,
+         *   oot_options?: string,
+         *   tournament_group?: int,
+         *   tournament_parent_id?: int|null,
+         *   avatar?: string
+         * }
+         */
+        public function getInfo(): array
+        {
+            return [];
+        }
+
+        /**
          * Retrieve tournament seeds for deterministic randomness.
          *
          * Returns an empty array when the table is not part of a tournament.
@@ -562,7 +585,7 @@ namespace Bga\GameFramework {
          * 
          * @return bool if the table is Turn-based.
          */
-        function isTurnBased(): bool {
+        public function isTurnBased(): bool {
             return false;
         }
     
@@ -571,8 +594,26 @@ namespace Bga\GameFramework {
          * 
          * @return bool if the table is Real-time.
          */
-        function isRealTime(): bool {
+        public function isRealTime(): bool {
             return false;
+        }
+
+        /**
+         * Returns the current game version.
+         * 
+         * @return int the game version
+         */
+        public function getGameVersion(): int {
+            return 0;
+        }
+
+        /**
+         * Get the selected language index as defined in the gameinfos file.
+         *
+         * @return int|null the selected language index, or null if the game has no game languages.
+         */
+        public function getGameLanguage(): ?int {
+            return 0;
         }
     }
 
@@ -1527,11 +1568,13 @@ namespace Bga\GameFramework {
         }
 
         /**
-         * Returns an index of the selected language as defined in gameinfos.inc.php.
+         * Returns an index of the selected language as defined in gameinfos.
+         * 
+         * @deprecated use $this->bga->tableOptions->getGameLanguage()
          */
-        final public function getGameLanguage(): string
+        final public function getGameLanguage(): int
         {
-            return '';
+            return 0;
         }
 
         /**
@@ -1555,6 +1598,8 @@ namespace Bga\GameFramework {
          *
          * NOTE: this method use globals "cache" if you directly manipulated globals table OR call this function after
          * `undoRestorePoint()` - it won't work as expected.
+         * 
+         * @deprecated use $this->bga->globals API instead. It's not the same DB table as GameStateValue, so if your game is in production and using it, keep it, except if you want to migrate the data to the new table too.
          * 
          * @param string $label the label
          * @param ?int $default a default value if the label doesn't have an associated value
@@ -1602,6 +1647,7 @@ namespace Bga\GameFramework {
          *     disable_player_order_swap_on_rematch: bool,
          *     game_interface_width: array{
          *         min: int,
+         *         autoscale?: bool|'viewport',
          *     }
          * }
          * @see gameinfos.inc.php
@@ -1812,6 +1858,8 @@ namespace Bga\GameFramework {
          * NOTE: this method use globals "cache" if you directly manipulated globals table OR call this function after
          * `undoRestorePoint()` - it won't work as expected.
          * 
+         * @deprecated use $this->bga->globals API instead. It's not the same DB table as GameStateValue, so if your game is in production and using it, keep it, except if you want to migrate the data to the new table too.
+         * 
          * @param string $label the label
          * @param int $increment the increment to add to the current value
          * @return int the new value 
@@ -2012,6 +2060,8 @@ namespace Bga\GameFramework {
          * Initialize global value. This is not required if you ok with default value if 0. This should be called from
          * `Table::setupNewGame()` function.
          * 
+         * @deprecated use $this->bga->globals API instead. It's not the same DB table as GameStateValue, so if your game is in production and using it, keep it, except if you want to migrate the data to the new table too.
+         * 
          * @param string $label the label
          * @param int $value the initial value
          * @return void
@@ -2023,6 +2073,8 @@ namespace Bga\GameFramework {
 
         /**
          * Set the current value of a global.
+         * 
+         * @deprecated use $this->bga->globals API instead. It's not the same DB table as GameStateValue, so if your game is in production and using it, keep it, except if you want to migrate the data to the new table too.
          * 
          * @param string $label the label
          * @param int $value the value to store
@@ -2205,6 +2257,8 @@ namespace Bga\GameFramework {
          * this method to access value of game options Game_options_and_preferences:_gameoptions.inc.php, in that case,
          * IDs need to be between 100 and 199. You must not use globals outside the range defined above, as those values
          * are used by other components of the framework.
+         * 
+         * @deprecated use $this->bga->globals API instead. It's not the same DB table as GameStateValue, so if your game is in production and using it, keep it, except if you want to migrate the data to the new table too.
          *
          * @param array<string, int> $labels
          */
@@ -2665,6 +2719,224 @@ namespace Bga\GameFramework\Components {
         }
     }
 
+}
+
+namespace Bga\GameFramework\Components\ItemManager {
+
+    /**
+     * Metadata attribute marking a class as an item managed by ItemManager.
+     */
+    #[\Attribute(\Attribute::TARGET_CLASS)]
+    class Item {
+        /** The name of DB table. */
+        public function __construct(public ?string $tableName = null) {}
+    }
+
+    enum ItemFieldKind: string {
+        case ID = 'id';
+        case LOCATION = 'location';
+        case ORDER = 'order';
+    }
+
+    /**
+     * Metadata attribute describing an item field persisted by ItemManager.
+     */
+    #[\Attribute(\Attribute::TARGET_PROPERTY)]
+    class ItemField {
+        /** The name of the field. */
+        public string $name;
+        /** The type of the data stored in that field. */
+        public string $type;
+        /** The name of the DB column. */
+        public string $dbField;
+        /** The class of the object for typed JSON fields. */
+        public ?string $class = null;
+
+        /**
+         * @param ?ItemFieldKind $kind Mandatory field kind, if applicable.
+         * @param ?string $type The type of the data stored in that field.
+         * @param ?string $dbField The name of the DB column, if different from the field name.
+         * @param bool $serialize Whether objects are stored as PHP serialized objects.
+         * @param int $locationIndex The location field index used for ordering.
+         */
+        public function __construct(
+            public ?ItemFieldKind $kind = null,
+            ?string $type = null,
+            ?string $dbField = null,
+            public bool $serialize = false,
+            public int $locationIndex = 0,
+        ) {
+        }
+    }
+
+    class ItemLocation {
+        public string|int|null $autoReshuffleFrom;
+        public ?\Closure $autoReshuffleCallback;
+
+        /**
+         * @param string|int $name The name of the location. String names can end with * or % as a wildcard.
+         * @param bool $randomPick Indicates if the location should be reshuffled when picking.
+         * @param string|int|ItemLocation|null $autoReshuffleFrom Location to rebuild from when needed.
+         * @param callable|null $autoReshuffleCallback Callback called after an automatic reshuffle.
+         */
+        public function __construct(
+            public string|int $name,
+            public bool $randomPick = false,
+            string|int|ItemLocation|null $autoReshuffleFrom = null,
+            ?callable $autoReshuffleCallback = null,
+        ) {
+        }
+
+        /**
+         * Create the 4 usual locations: deck, discard, table and hand.
+         * @param bool $reshuffleDiscardToDeck if deck is automatically rebuilt from discard when needed.
+         * @return ItemLocation[] default locations
+         */
+        public static function getDefaults(bool $reshuffleDiscardToDeck = true): array { return []; }
+    }
+
+    class Location {
+        /** @var array<int, mixed> */
+        public array $locations;
+        public bool $filter;
+
+        /** Create a concrete location from one or more location parts. */
+        public static function from(array|string|int|Location $location, string|int|null ...$locations): self { return new self(); }
+        /** Create a read-only location filter. */
+        public static function filter(array|string|int|Location $location, string|int|array|null ...$locations): self { return new self(); }
+    }
+
+    /**
+     * Manager for database-backed game items.
+     *
+     * @template T of object
+     */
+    class ItemManager {
+        /** @param class-string<T> $className The Item object class. */
+        public function __construct(
+            private string $className,
+            ?callable $classNameResolver = null,
+            ?callable $dbUpdateCallback = null,
+            ?callable $countChangeCallback = null,
+        ) {}
+
+        /** Create the DB table; call this at the beginning of Game::setupNewGame. */
+        public function initDb(): void {}
+        /** Register a location available for managed items. */
+        public function addLocation(ItemLocation $location): void {}
+        /** @param array<int, mixed> $locations */
+        public function addLocations(array $locations): void {}
+        /** Return a registered location by name, including wildcard matches. */
+        public function getLocationByName(string|int $locationName): ?ItemLocation { return null; }
+        /** Create new items in the DB. @param array[] $itemsTypes */
+        public function createItems(array $itemsTypes): void {}
+        /** Move all items from one location to another. */
+        public function moveAllItemsInLocation(Location|array|string|int|null $from, Location|array|string|int $to): void {}
+        /**
+         * Pick an item from a location into another location.
+         * @return T|null An object of the managed class, or null if no item is picked.
+         */
+        public function pickItem(Location|array|string|int $from, Location|array|string|int $to): ?object { return null; }
+        /**
+         * Pick items from a location into another location.
+         * @param int $number The number of items to pick.
+         * @return \Bga\GameFramework\Helpers\Collection<T>
+         */
+        public function pickItems(int $number, Location|array|string|int $from, Location|array|string|int $to): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** Set the order of a managed item within its location. @param int|T $itemOrItemId */
+        public function setItemOrder(object|int $itemOrItemId, int $order): void {}
+        /** Move one managed item to a location. @param int|T $itemOrItemId */
+        public function moveItem(object|int $itemOrItemId, Location|array|string|int $to, ?int $order = null): void {}
+        /** Move managed items to a location. @param array<int|T>|Collection<int|T> $itemsOrItemIds */
+        public function moveItems(array|\Bga\GameFramework\Helpers\Collection $itemsOrItemIds, Location|array|string|int $to, bool $prepend = false): void {}
+        /**
+         * Get a list of items matching values for a field name.
+         * @param mixed $values A single value or an array of values.
+         * @return \Bga\GameFramework\Helpers\Collection<T>
+         */
+        public function getItemsByFieldName(string $fieldName, mixed $values, ?int $limit = null, ?string $sortByField = null, bool $reversed = false): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /**
+         * Get a list of items matching multiple queries with AND.
+         * @param array<string, mixed>|array<array{0: string, 1: mixed}> $filters
+         * @return \Bga\GameFramework\Helpers\Collection<T>
+         */
+        public function getItemsByFieldNames(array $filters, ?int $limit = null, ?string $sortByField = null, bool $reversed = false): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** See getItemsByFieldName. @param mixed $values A single value or an array of values. @return \Bga\GameFramework\Helpers\Collection<T> */
+        public function getItemsByField(ItemField $field, mixed $values, ?int $limit = null, ?string $sortByField = null, bool $reversed = false): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** See getItemsByFieldNames. @param array<array{0: ItemField, 1: mixed}> $filters @return \Bga\GameFramework\Helpers\Collection<T> */
+        public function getItemsByFields(array $filters, ?int $limit = null, ?string $sortByField = null, bool $reversed = false): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** @return T|null An object of the managed class, or null if it does not exist. */
+        public function getItemById(int $id): ?object { return null; }
+        /** @param int[] $ids @return \Bga\GameFramework\Helpers\Collection<T> */
+        public function getItemsByIds(array $ids, ?string $sortByField = null, bool $reversed = false): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** Count the items in a location. Use null for a non-trailing location part as a wildcard filter. */
+        public function countItemsInLocation(Location|array|string|int $location): int { return 0; }
+        /** Get the highest order value currently used in a location. */
+        public function getMaxOrderInLocation(Location|array|string|int $location): int { return 0; }
+        /** @return \Bga\GameFramework\Helpers\Collection<T> Use null for a non-trailing location part as a wildcard filter. */
+        public function getItemsInLocation(Location|array|string|int $location, bool $reversed = false, ?int $limit = null, ?string $sortByField = null): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** @return \Bga\GameFramework\Helpers\Collection<T> A collection of managed items keyed by item id. */
+        public function getAllItems(?int $limit = null): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** @return T|null An object on top of the location, or null if no item is present. */
+        public function getItemOnTop(Location|array|string|int $location): ?object { return null; }
+        /** @return \Bga\GameFramework\Helpers\Collection<T> Items on top of the location. */
+        public function getItemsOnTop(int $number, Location|array|string|int $location): \Bga\GameFramework\Helpers\Collection { return new class extends \Bga\GameFramework\Helpers\Collection{}(); }
+        /** Update the DB value based on the Item fields; all fields are updated if null. */
+        public function updateItem(object $item, array|string|null $fields = null): void {}
+        /** @param T[]|\Bga\GameFramework\Helpers\Collection<T> $items Update DB values based on the Item fields. */
+        public function updateItems(array|\Bga\GameFramework\Helpers\Collection $items, array|string|null $fields = null): void {}
+        /** Update the named field on all items. */
+        public function updateAllItems(string $fieldName, mixed $value): void {}
+        /** @return T|null An object of the managed class, or null if no item is provided. */
+        public function getItemFromDb(?array $dbItem): ?object { return null; }
+        /** Shuffle the order of the items in a location. */
+        public function shuffle(Location|array|string|int $location): void {}
+        /**
+         * Change the ids of some items, usually when items become hidden again.
+         * @param array<int|T>|\Bga\GameFramework\Helpers\Collection<int|T> $itemsOrItemIds
+         * @return array<int, int> old id => new id
+         */
+        public function changeIds(array|\Bga\GameFramework\Helpers\Collection $itemsOrItemIds): array { return []; }
+        /** Change the ids of all items in a location. */
+        public function changeIdsForLocation(Location|array|string|int $location): void {}
+        /**
+         * Update the table with columns added to the item class after its creation.
+         * @param string[] $fieldNames The names of the newly added fields.
+         */
+        public function upgradeTableDbAddColumns(array $fieldNames) {}
+    }
+
+}
+
+namespace Bga\GameFramework\Components {
+
+    /** Factory for creating ItemManager components. */
+    abstract class ItemManagerFactory {
+        /**
+         * Creates an ItemManager for the given item class.
+         *
+         * The item class must declare an #[Item] attribute, and its managed fields
+         * must be declared with #[ItemField] attributes.
+         *
+         * @template T of object
+         * @param class-string<T> $className Item base class managed by this manager.
+         * @param (callable(array<string, mixed>|null): class-string<T>|null)|null $classNameResolver Optional resolver used to instantiate a subclass from a DB row.
+         * @param \Bga\GameFramework\Components\ItemManager\ItemLocation[] $locations Locations accepted by this manager.
+         * @param (callable(string, array<int|string, array<string, mixed>>, string): void)|null $dbUpdateCallback Optional callback receiving table name, updated DB lines keyed by item id, and operation ('INSERT' or 'UPDATE').
+         * @param (callable(string, array<string, array{location: array<int, string|int|null>, count: int}>): void)|null $countChangeCallback Optional callback receiving table name and changed item counts keyed by encoded location.
+         * @return \Bga\GameFramework\Components\ItemManager\ItemManager<T>
+         */
+        public function createItemManager(
+            string $className,
+            ?callable $classNameResolver = null,
+            array $locations = [],
+            ?callable $dbUpdateCallback = null,
+            ?callable $countChangeCallback = null,
+        ): \Bga\GameFramework\Components\ItemManager\ItemManager {
+            return new \Bga\GameFramework\Components\ItemManager\ItemManager($className, $classNameResolver, $dbUpdateCallback, $countChangeCallback);
+        }
+    }
+
     final class DeckFactory {
         /**
          * Create a Deck component and set the DB table name.
@@ -2942,13 +3214,24 @@ namespace Bga\GameFramework\Helpers {
     class Collection extends \ArrayObject
     {
       /**
+       * Create a collection from an array or object.
+       *
+       * @param array<int|string, T>|object $array Items used to initialize the collection.
+       * @param int $flags Flags controlling the behavior of the underlying ArrayObject.
+       * @param class-string<\ArrayIterator> $iteratorClass Iterator class used when iterating over the collection.
+       */
+      public function __construct(array|object $array = [], int $flags = 0, string $iteratorClass = \ArrayIterator::class)
+      {
+      }
+
+      /**
        * Return the keys used by this collection.
        *
        * @return array<int, int|string>
        */
       public function keys(): array
       {
-        return array_keys($this->getArrayCopy());
+        return [];
       }
       /**
        * Check whether the collection contains no items.
@@ -2957,7 +3240,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function isEmpty(): bool
       {
-        return empty($this->getArrayCopy());
+        return false;
       }
       /**
        * Return the first value in insertion order, or null when the collection is empty.
@@ -2966,8 +3249,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function first(): mixed
       {
-        $arr = $this->values();
-        return isset($arr[0]) ? $arr[0] : null;
+        return null;
       }
       /**
        * Return the last value in insertion order, or null when the collection is empty.
@@ -2976,8 +3258,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function last(): mixed
       {
-        $arr = $this->values();
-        return empty($arr) ? null : $arr[count($arr) - 1];
+        return null;
       }
       /**
        * Return a new collection with the given object stored under its id.
@@ -2989,9 +3270,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function add(mixed $obj, ?int $id = null): Collection
       {
-        $items = $this->all();
-        $items[$id ?? $this->getObjectValue($obj, 'id')] = $obj;
-        return new Collection($items);
+        return new class extends Collection{}();
       }
       /**
        * Check whether the collection contains an item for the given key.
@@ -3001,7 +3280,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function has(int|string $key): bool
       {
-        return array_key_exists($key, $this->getArrayCopy());
+        return false;
       }
       /**
        * Return a random value from the collection, or null when it is empty.
@@ -3010,12 +3289,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function random(): mixed
       {
-        $arr = $this->getArrayCopy();
-        if (empty($arr)) {
-          return null;
-        }
-        $key = array_rand($arr, 1);
-        return $arr[$key];
+        return null;
       }
       /**
        * Return all values without preserving their original keys.
@@ -3024,7 +3298,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function values(): array
       {
-        return array_values($this->getArrayCopy());
+        return [];
       }
       /**
        * Return all items as a native PHP array while preserving keys.
@@ -3033,7 +3307,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function all(): array
       {
-        return $this->getArrayCopy();
+        return [];
       }
       /**
        * Return a new collection without values found in another collection.
@@ -3044,11 +3318,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function diff(Collection $remove, ?callable $compareFn = null): Collection
       {
-        return $this->filter(function ($value) use ($remove, $compareFn) {
-          return !$remove->some(function ($removedValue) use ($value, $compareFn) {
-            return $compareFn !== null ? $compareFn($value, $removedValue) : $value === $removedValue;
-          });
-        });
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection containing one property value extracted from each item.
@@ -3058,7 +3328,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function pluck(string $property): Collection
       {
-        return $this->map(fn($item) => $this->getObjectValue($item, $property));
+        return new class extends Collection{}();
       }
       /**
        * Return the first value matching the predicate, or null when none matches.
@@ -3068,11 +3338,6 @@ namespace Bga\GameFramework\Helpers {
        */
       public function find(callable $fn): mixed
       {
-        foreach ($this->all() as $key => $value) {
-          if ($fn($value, $key)) {
-            return $value;
-          }
-        }
         return null;
       }
       /**
@@ -3083,11 +3348,6 @@ namespace Bga\GameFramework\Helpers {
        */
       public function findKey(callable $fn): int|string|null
       {
-        foreach ($this->all() as $key => $value) {
-          if ($fn($value, $key)) {
-            return $key;
-          }
-        }
         return null;
       }
       /**
@@ -3098,9 +3358,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function count(?callable $fn = null): int
       {
-        return $fn === null
-          ? parent::count()
-          : count(array_filter($this->all(), $fn, ARRAY_FILTER_USE_BOTH));
+        return 0;
       }
       /**
        * Check whether at least one value matches the predicate.
@@ -3110,11 +3368,6 @@ namespace Bga\GameFramework\Helpers {
        */
       public function some(callable $fn): bool
       {
-        foreach ($this->all() as $key => $value) {
-          if ($fn($value, $key)) {
-            return true;
-          }
-        }
         return false;
       }
       /**
@@ -3125,12 +3378,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function every(callable $fn): bool
       {
-        foreach ($this->all() as $key => $value) {
-          if (!$fn($value, $key)) {
-            return false;
-          }
-        }
-        return true;
+        return false;
       }
       /**
        * Return a new collection with each value transformed by the callback.
@@ -3141,11 +3389,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function map(callable $func): Collection
       {
-        $result = [];
-        foreach ($this->all() as $key => $value) {
-          $result[$key] = $func($value, $key);
-        }
-        return new Collection($result);
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection containing this collection plus keys not already present from another collection.
@@ -3155,7 +3399,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function merge(Collection $arr): Collection
       {
-        return new Collection($this->all() + $arr->all());
+        return new class extends Collection{}();
       }
       /**
        * Reduce the collection values to a single value.
@@ -3167,7 +3411,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function reduce(callable $func, mixed $init): mixed
       {
-        return array_reduce($this->values(), $func, $init);
+        return 0;
       }
       /**
        * Return a new collection containing only values matching the predicate.
@@ -3177,7 +3421,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function filter(callable $func): Collection
       {
-        return new Collection(array_filter($this->all(), $func, ARRAY_FILTER_USE_BOTH));
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection containing a key-preserving slice of this collection.
@@ -3188,7 +3432,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function slice(int $offset, ?int $length = null): Collection
       {
-        return new Collection(array_slice($this->all(), $offset, $length, true));
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection containing the first N items.
@@ -3198,7 +3442,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function take(int $n): Collection
       {
-        return $this->slice(0, $n);
+        return new class extends Collection{}();
       }
       /**
        * Check whether the collection contains the given object.
@@ -3208,7 +3452,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function contains(mixed $t): bool
       {
-        return in_array($t, $this->getArrayCopy());
+        return false;
       }
       /**
        * Return a new collection sorted with a value comparator while preserving keys.
@@ -3218,9 +3462,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function sort($callback): Collection
       {
-        $t = $this->getArrayCopy();
-        \uasort($t, $callback);
-        return new Collection($t);
+        return new class extends Collection{}();
       }
       /*****
        * Méthods for collection of object
@@ -3238,10 +3480,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function where(string $field, mixed $value, bool $strict = true): Collection
       {
-        return $this->filter(function ($obj) use ($field, $value, $strict) {
-            $objValue = $this->getObjectValue($obj, $field);
-            return $this->matchesValue($objValue, $value, $strict);
-          });
+        return new class extends Collection{}();
       }
       /**
        * Count items where a field matches a value.
@@ -3256,10 +3495,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function countWhere(string $field, mixed $value, bool $strict = true): int
       {
-        return $this->count(function ($obj) use ($field, $value, $strict) {
-          $objValue = $this->getObjectValue($obj, $field);
-          return $this->matchesValue($objValue, $value, $strict);
-        });
+        return 0;
       }
       /**
        * Return a new collection containing items where a field does not match a value.
@@ -3274,10 +3510,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function whereNot(string $field, mixed $value, bool $strict = true): Collection
       {
-        return $this->filter(function ($obj) use ($field, $value, $strict) {
-            $objValue = $this->getObjectValue($obj, $field);
-            return !$this->matchesValue($objValue, $value, $strict);
-          });
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection containing items where a field is null.
@@ -3287,10 +3520,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function whereNull(string $field): Collection
       {
-        return $this->filter(function ($obj) use ($field) {
-          $objValue = $this->getObjectValue($obj, $field);
-          return is_null($objValue);
-        });
+        return new class extends Collection{}();
       }
       /**
        * Return a new collection sorted by a field value.
@@ -3301,11 +3531,20 @@ namespace Bga\GameFramework\Helpers {
        */
       public function sortBy(string $field, string $asc = 'ASC'): Collection
       {
-        return $this->sort(function ($a, $b) use ($field, $asc) {
-          $order = $this->getObjectValue($a, $field) <=> $this->getObjectValue($b, $field);
-          return strtolower($asc) == 'desc' ? -$order : $order;
-        });
+        return new class extends Collection{}();
       }
+        /**
+        * Group items by a field value or callback result.
+        *
+        * Original keys are retained within each group.
+        *
+        * @param string|((callable(T): (int|string))|(callable(T, int|string): (int|string))) $criteria Field, array key, getter suffix, or callback.
+        * @return Collection<Collection<T>>
+        */
+        public function groupBy(string|callable $criteria): Collection
+        {
+            return new class extends Collection{}();
+        }
       /**
        * Return a new collection with each item's field updated on a cloned item.
        *
@@ -3318,83 +3557,7 @@ namespace Bga\GameFramework\Helpers {
        */
       public function update(string $field, mixed $value): Collection
       {
-        $method = 'set' . ucfirst($field);
-        $items = $this->all();
-        foreach ($items as $key => $obj) {
-          if (is_array($obj)) {
-            $updated = $obj;
-            $updated[$field] = $value;
-          } else {
-            if (!is_object($obj)) {
-              throw new \BadMethodCallException("Cannot update field '{$field}' on a scalar item.");
-            }
-            $updated = clone $obj;
-            if (method_exists($updated, $method)) {
-              $updated->$method($value);
-            } elseif (property_exists($updated, $field)) {
-              $updated->{$field} = $value;
-            } else {
-              throw new \BadMethodCallException("Cannot update field '{$field}' without {$method}() or a matching property.");
-            }
-          }
-          $items[$key] = $updated;
-        }
-        // PHPStan cannot retain T after the runtime array/object narrowing above.
-        // @phpstan-ignore return.type
-        return new Collection($items);
-      }
-      /**
-       * Read a field value from an array, getter, or public object property.
-       *
-       * @param object|array $object Item to read from.
-       * @param string $field Field, array key, or getter suffix to read.
-       * @return mixed
-       */
-      private function getObjectValue(object|array $object, string $field): mixed {
-        if (is_array($object)) {
-          return $object[$field] ?? null;
-        }
-        // first check for a getter
-        $method = 'get' . ucfirst($field);
-        if (method_exists($object, $method)) {
-          return $object->$method();
-        }
-        // if no getter, access the field directly
-        return property_exists($object, $field) ? $object->{$field} : null;
-      }
-      /**
-       * Check whether a field value matches a target value, allowed set, or SQL-like pattern.
-       *
-       * @param mixed $objectValue Field value read from an item.
-       * @param mixed $value Value, list of values, or pattern to match.
-       * @param bool $strict Use strict comparison for scalar values and allowed sets.
-       * @return bool
-       */
-      private function matchesValue(mixed $objectValue, mixed $value, bool $strict = true): bool
-      {
-        if (is_array($value)) {
-          return in_array($objectValue, $value, $strict);
-        }
-        if (is_string($value) && str_contains($value, '%')) {
-          return ($strict ? is_string($objectValue) : (is_scalar($objectValue) || $objectValue instanceof \Stringable))
-            && $this->like_match($value, (string) $objectValue);
-        }
-        if (is_object($objectValue) !== is_object($value) || is_array($objectValue)) {
-          return false;
-        }
-        return $strict ? $objectValue === $value : $objectValue == $value;
-      }
-      /**
-       * Check whether a subject matches a SQL-like pattern using "%" as wildcard.
-       *
-       * @param string $pattern Pattern containing optional "%" wildcards.
-       * @param string $subject Value to test.
-       * @return bool
-       */
-      private function like_match(string $pattern, string $subject): bool
-      {
-        $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
-        return (bool) preg_match("/^{$pattern}$/i", $subject);
+        return new class extends Collection{}();
       }
     }
 
@@ -3450,16 +3613,50 @@ namespace Bga\GameFramework\GameResult {
         /**
          * Score all players separately (no-team game).
          *
-         * @param Player[] $players The players at this table. Currently, real players only.
+         * @param array<int, Player|int|null>|null $players The players or their IDs.
          * @param bool $reverseScore Whether negative scores should be rewarded
          * @param bool $reverseScoreAux Whether auxiliary score ordering is reversed
          *
          * @return self
          */
         public static function individualRanking(
-            array $players,
+            ?array $players = null,
             bool $reverseScore = false,
             bool $reverseScoreAux = false,
+        ) {
+            return new self();
+        }
+
+        /**
+         * Build a solo game result (internally treated as a cooperative result).
+         *
+         * @param Player|int|null $player The player or player ID at this table. Null finds the only player.
+         * @param int $score The solo score. For display only, the outcome is decided by $win.
+         * @param bool $win indicates if the coop game is won or lost
+         *
+         * @return self
+         */
+        public static function solo(
+            Player|int|null $player = null,
+            int $score = 0,
+            bool $win = true,
+        ) {
+            return new self();
+        }
+
+        /**
+         * Build a cooperative result with a single team representing all players.
+         *
+         * @param array<int, Player|int|null>|null $players The players or their IDs. Null uses all players.
+         * @param int $score The team score. For display only, the outcome is decided by $win.
+         * @param bool $win indicates if the coop game is won or lost
+         *
+         * @return self
+         */
+        public static function coop(
+            ?array $players = null,
+            int $score = 0,
+            bool $win = true,
         ) {
             return new self();
         }
