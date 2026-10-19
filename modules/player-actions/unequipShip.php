@@ -10,7 +10,7 @@ trait UnequipShip {
 			
 		// Check you have the occupation
 		if (! Occupation::has($player_id, 39)) {
-			throw new BgaUserException( self::_("You cannot remove ore from ships") );
+			throw new BgaUserException( clienttranslate("You cannot remove ore from ships") );
 		}
 		
 		// Check you have the boat (+ remove its ore)

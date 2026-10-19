@@ -47,7 +47,7 @@ trait EquipBoard {
 		if ($type == "resource") {
 			// Check you have resource
 			if ($player[$asset] <= 0) {
-				throw new BgaUserException( self::_("You do not have any of that resource") );
+				throw new BgaUserException( clienttranslate("You do not have any of that resource") );
 			}
 		} else {
 			// Check the user has the good

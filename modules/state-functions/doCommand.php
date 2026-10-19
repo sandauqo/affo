@@ -316,13 +316,13 @@ trait DoCommand {
 						if ($tobuild == "whalingboat") {
 							if ($num_small >= 3) {
 								// No room!
-								throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+								throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 							}
 						} else {
 							if ($num_big >= 4) {
 								if (! $has_built_something) {
 									// No room!
-									throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+									throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 								} else {
 									continue;
 								}

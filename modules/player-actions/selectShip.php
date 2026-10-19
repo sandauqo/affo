@@ -86,7 +86,7 @@ trait SelectShip {
 			
 			if ($num_big >= 4) {
 				// No room!
-				throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 			}
 			
 			$spent = $this->spendBoat( $player, $ship_id, "action-$action_id" );
@@ -113,7 +113,7 @@ trait SelectShip {
 			
 			if ($num_big >= 4) {
 				// No room!
-				throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 			}
 			
 			$spent = $this->spendBoat( $player, $ship_id, "action-$action_id" );
@@ -225,7 +225,7 @@ trait SelectShip {
 
 			if ($action_id == 124) {
 				if (! $this->canAfford($player, "coin", 2)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend($player, "coin", 2, "action-$action_id");
 			}

@@ -96,7 +96,7 @@ trait DeclareSuccess {
 			}
 			
 			if ($value < $min_value) {
-				throw new BgaUserException( self::_("Result too low to be a success") );
+				throw new BgaUserException( clienttranslate("Result too low to be a success") );
 			}
 			
 			if ($hunt_type == 'raid') {
@@ -114,7 +114,7 @@ trait DeclareSuccess {
 			self::setGameStateValue( 'raid_value', $value );
 		} else {
 			if ($value > 0) {
-				throw new BgaUserException( self::_("Result too high to be a success. You can reduce the result with cards and resources.") );
+				throw new BgaUserException( clienttranslate("Result too high to be a success. You can reduce the result with cards and resources.") );
 			} else if ($value < 0) {
 				// TODO : Should be allowed, but show warning. Because of this, no translation
 				//throw new BgaUserException( "Result too low." );

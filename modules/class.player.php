@@ -328,14 +328,14 @@ class FfoPlayer {
 				// No room!
 				if (! $error_if_no_room)
 					return null;
-				throw new BgaUserException( self::_("You do not have enough room for that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room for that boat") );
 			}
 		} else {
 			if ($num_big >= 4) {
 				// No room!
 				if (! $error_if_no_room)
 					return null;
-				throw new BgaUserException( self::_("You do not have enough room for that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room for that boat") );
 			}
 		}
 		
@@ -575,7 +575,7 @@ class FfoPlayer {
 				// If there are emigrations...
 				if ($target_coords[0] < $emigration_columns) {
 					// TODO : Move this check to javascript?
-					throw new BgaUserException( FeastForOdin::totranslate("You cannot overlap an Emigration tile") );
+					throw new BgaUserException( clienttranslate("You cannot overlap an Emigration tile") );
 				}
 				
 				// If they overlap other goods: red
@@ -721,7 +721,7 @@ class FfoPlayer {
 			$has_160 = Occupation::has($player_id, 160);
 			foreach ($board["goods"] as $good) {
 				if ($has_160 && $game->getGameStateValue('occ_soberman') && $good["type"] == "mead") {
-					throw new BgaUserException( FeastForOdin::totranslate("You cannot place mead because you activated the Sober Man") );
+					throw new BgaUserException( clienttranslate("You cannot place mead because you activated the Sober Man") );
 				}
 				if ($good["coords"][1] > 0) {
 					throw new BgaVisibleSystemException( "Error in makeBoardArray (not on bottom row)" );

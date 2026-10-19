@@ -21,7 +21,7 @@ trait BuyShip {
 		
 		// Check you have enough money
 		if ($player["coin"] < $cost) {
-			throw new BgaUserException( self::_("You cannot afford that ship") );
+			throw new BgaUserException( clienttranslate("You cannot afford that ship") );
 		}
 		
 		// Spend the money
@@ -40,12 +40,12 @@ trait BuyShip {
 		if ($ship_type == "whalingboat") {
 			if ($num_small >= 3) {
 				// No room!
-				throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 			}
 		} else {
 			if ($num_big >= 4) {
 				// No room!
-				throw new BgaUserException( self::_("You do not have enough room to buy that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 			}
 		}
 		

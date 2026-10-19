@@ -7,14 +7,14 @@ trait EquipShip {
 		
 		$state = $this->gamestate->state();
 		if ($state['name'] == 'command-hunt' || $state['name'] == 'command-hunt-reward' || $state['name'] == 'command-hunt-reward2') {
-			throw new BgaUserException( self::_("You cannot add ore to a boat at this time") );
+			throw new BgaUserException( clienttranslate("You cannot add ore to a boat at this time") );
 		}
 		
 		$player_id = self::getCurrentPlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
 		
 		if (Occupation::has($player_id, 9) && $state['name'] == 'command-oreboatman') {
-			throw new BgaUserException( self::_("You cannot add ore to a boat at this time") );
+			throw new BgaUserException( clienttranslate("You cannot add ore to a boat at this time") );
 		}
 		
 		// Check you have the boat (+ give it ore)
@@ -38,7 +38,7 @@ trait EquipShip {
 		
 		// Check you have ore
 		if ($player["ore"] <= 0) {
-			throw new BgaUserException( self::_("You do not have enough ore") );
+			throw new BgaUserException( clienttranslate("You do not have enough ore") );
 		}
 		
 		// Spend the ore

@@ -31,7 +31,7 @@ trait ActAction {
 
 		if ($state['name'] == 'pickAction' && str_contains("$action_id", "555") && count($thing_meeples) > 1) {
 			if (! FfoPlayer::isActionAvailable($action_id)) {
-				throw new BgaUserException( self::_("That action is not available") );
+				throw new BgaUserException( clienttranslate("That action is not available") );
 			}
 			$this->gamestate->nextState( 'vikingsNumber' );
 		} else {

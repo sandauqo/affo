@@ -167,7 +167,7 @@ trait Undo {
 			throw new BgaVisibleSystemException( "Undo is not supported in this game. (Game started before feature added.)" );
 		}
 		if (! self::getGameStateValue( 'can_undo' )) {
-			throw new BgaUserException( self::_("You cannot undo at this time") );
+			throw new BgaUserException( clienttranslate("You cannot undo at this time") );
 		}
 		// Restore state
 		

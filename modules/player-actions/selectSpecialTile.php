@@ -30,7 +30,7 @@ trait SelectSpecialTile {
 			
 			// You need the cash
 			if ($found["cost"] >= 100) {
-				throw new BgaUserException( self::_("That tile cannot be bought") );
+				throw new BgaUserException( clienttranslate("That tile cannot be bought") );
 			}
 			
 			$cost = $found["cost"];
@@ -45,7 +45,7 @@ trait SelectSpecialTile {
 			}
 			
 			if ($player["coin"] < $cost) {
-				throw new BgaUserException( self::_("You do not have enough coins to buy that tile") );
+				throw new BgaUserException( clienttranslate("You do not have enough coins to buy that tile") );
 			}
 			$this->spend( $player, "coin", $cost, 'action-'.$action_id );
 		} 
@@ -59,7 +59,7 @@ trait SelectSpecialTile {
 				
 				// Must be a tongs item
 				if (! $found["tongs"]) {
-					throw new BgaUserException( self::_("That tile cannot be forged") );
+					throw new BgaUserException( clienttranslate("That tile cannot be forged") );
 				}
 			}
 		} 
@@ -70,11 +70,11 @@ trait SelectSpecialTile {
             
             // Must be a tongs item
             if (! $found["tongs"]) {
-                throw new BgaUserException( self::_("That tile cannot be forged") );
+                throw new BgaUserException( clienttranslate("That tile cannot be forged") );
             }
 
             if (+$found["strength"] > 8) {
-                throw new BgaUserException( self::_("Tile strength must be < 9") );
+                throw new BgaUserException( clienttranslate("Tile strength must be < 9") );
             }
 		} 
 		else if ($state['name'] == 'command-fineblacksmith') {
@@ -84,7 +84,7 @@ trait SelectSpecialTile {
 			
 			// You need the cash
 			if (! in_array($found["name"], ["crucifix", "cane"])) {
-				throw new BgaUserException( self::_("That tile cannot be bought") );
+				throw new BgaUserException( clienttranslate("That tile cannot be bought") );
 			}
 			
 			$source = 'occupation-62';

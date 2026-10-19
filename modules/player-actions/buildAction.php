@@ -32,7 +32,7 @@ trait BuildAction {
 			
 			// That action must be empty
 			if (! FfoPlayer::isActionAvailable($action_id)) {
-				throw new BgaUserException( self::_("That action is not available") );
+				throw new BgaUserException( clienttranslate("That action is not available") );
 			}
 			
 			$number_meeples = $actions[0]->numberMeeples;
@@ -55,7 +55,7 @@ trait BuildAction {
 			// The player must have enough available meeples
 			$meeples = FfoPlayer::getMeeples($player_id, 'thing');
 			if (count($meeples) < $number_meeples) {
-				throw new BgaUserException( self::_("You do not have enough vikings to perform that action") );
+				throw new BgaUserException( clienttranslate("You do not have enough vikings to perform that action") );
 			}
 
 			if (count($meeples) - $number_meeples == 3) {
@@ -94,25 +94,25 @@ trait BuildAction {
 		else if ($state['name'] == 'command-clone') {
 			// That action must be occupied by someone else
 			if (! FfoPlayer::isOccupiedByAnotherPlayer($action_id, $player_id)) {
-				throw new BgaUserException( self::_("That action is not occupied by another player") );
+				throw new BgaUserException( clienttranslate("That action is not occupied by another player") );
 			}
 			
 			$command = $this->getString( 'currentCommand' );
 			$components = explode('-', $command);
 			
 			if (Action::getCol($action_id) != $components[1]) {
-				throw new BgaUserException( self::_("That action is not in the corresponding column") );
+				throw new BgaUserException( clienttranslate("That action is not in the corresponding column") );
 			}
 		} 
 		else if ($state['name'] == 'command-follower') {
 			// That action must be occupied by someone else
 			if (count(FfoPlayer::getMeeplesOnAction($action_id)) == 0) {
-				throw new BgaUserException( self::_("That action is not occupied") );
+				throw new BgaUserException( clienttranslate("That action is not occupied") );
 			}
 			
 			// Must be in the second column
 			if (Action::getCol($action_id) != 2) {
-				throw new BgaUserException( self::_("You must select an action in the 2nd column") );
+				throw new BgaUserException( clienttranslate("You must select an action in the 2nd column") );
 			}
 			
 			$push_or_unshift = 'unshift';
@@ -123,12 +123,12 @@ trait BuildAction {
 		else if ($state['name'] == 'command-latecomer') {
 			// has to be unoccupied
 			if (count(FfoPlayer::getMeeplesOnAction($action_id)) != 0) {
-				throw new BgaUserException( self::_("That action is not unoccupied") );
+				throw new BgaUserException( clienttranslate("That action is not unoccupied") );
 			}
 			
 			// has to be in 1st col
 			if (Action::getCol($action_id) != 1) {
-				throw new BgaUserException( self::_("You must select an action in the 1st column") );
+				throw new BgaUserException( clienttranslate("You must select an action in the 1st column") );
 			}
 			
 			// Adjacent to one of yours...
@@ -136,7 +136,7 @@ trait BuildAction {
 			$beforeAfter = $this->getLatecomerBeforeAfter($action_id);
 			$meeples = FeastForOdin::getObjectList( "SELECT * FROM meeple WHERE action_id IN (" . implode(',', $beforeAfter) . ") AND location = 'action' AND $condition" );
 			if (count($meeples) == 0) {
-				throw new BgaUserException( self::_("You do not have meeples in a space above or below") );
+				throw new BgaUserException( clienttranslate("You do not have meeples in a space above or below") );
 			}
 			
 			// Must pay 1 coin
@@ -155,13 +155,13 @@ trait BuildAction {
 			$action_id = $this->getGameStateValue( 'inspector_action' );
 
 			if ($action_id > 1000) {
-				throw new BgaUserException( self::_("Inspector cannot be used with the fifth action column (final action)."));
+				throw new BgaUserException( clienttranslate("Inspector cannot be used with the fifth action column (final action)."));
 			}
 
 			// That action must contain one of your meeples
 			$pre_meeples = FfoPlayer::getMeeplesOnAction($action_id);
 			if (count($pre_meeples) == 0 || $pre_meeples[0]["player_id"] != $player_id) {
-				throw new BgaUserException( self::_("That action does not contain any of your vikings") );
+				throw new BgaUserException( clienttranslate("That action does not contain any of your vikings") );
 			}
 
 			if ($this->isSoloGame()) {
@@ -169,7 +169,7 @@ trait BuildAction {
 				$round = FeastForOdin::$game->getGameStateValue('round');
 				$active_colour = ($round % 2 == 0) ? 1 : 0;
 				if ((int)$pre_meeples[0]['colour'] !== $active_colour) {
-					throw new BgaUserException( self::_("You can only return meeples that you placed in this round."));
+					throw new BgaUserException( clienttranslate("You can only return meeples that you placed in this round."));
 				}
 			}
 

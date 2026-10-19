@@ -13,7 +13,7 @@ trait SelectGoods {
         if ($components[0] == 'occupation') {
             if ($components[1] == 31) {
                 if (count($goods) !== 1) {
-                    throw new BgaUserException( self::_("You must select exactly one good") );
+                    throw new BgaUserException( clienttranslate("You must select exactly one good") );
                 }
                 
                 $good_type = $goods[0];
@@ -41,14 +41,14 @@ trait SelectGoods {
             else if ($components[1] == 66) {
                 // Field Farmer
                 if (count($goods) !== 1) {
-                    throw new BgaUserException( self::_("You must select exactly one good") );
+                    throw new BgaUserException( clienttranslate("You must select exactly one good") );
                 }
                 
                 $good_type = $goods[0];
                 foreach ($player["goods"] as $g) {
                     if ($g["type"] == $good_type) {
                         if ($g["colour"] != "orange") {
-                            throw new BgaUserException( self::_("You can only upgrade orange tiles") );
+                            throw new BgaUserException( clienttranslate("You can only upgrade orange tiles") );
                         }
                         break;
                     }
@@ -135,11 +135,11 @@ trait SelectGoods {
                 // Check the goods are different and green
                 foreach ($upgrading_goods as $g) {
                     if (isset($seen_types[$g["type"]])) {
-                        throw new BgaUserException( self::_("You must upgrade different tiles") );
+                        throw new BgaUserException( clienttranslate("You must upgrade different tiles") );
                     }
                     $seen_types[$g["type"]] = 1;
                     if ($g["colour"] != "green") {
-                        throw new BgaUserException( self::_("You can only upgrade green tiles") );
+                        throw new BgaUserException( clienttranslate("You can only upgrade green tiles") );
                     }
                 }
                 $num_steps = 1;
@@ -160,19 +160,19 @@ trait SelectGoods {
                 
                 // Correct number of tiles
                 if (count($upgrading_goods) > $num_tiles) {
-                    throw new BgaUserException( self::_("You cannot upgrade that many tiles") );
+                    throw new BgaUserException( clienttranslate("You cannot upgrade that many tiles") );
                 }
                 
                 if ($components[0] == 'upgrade' && count($upgrading_goods) == 0) {
                     if (count($components) >= 4) {
                         // Compulsory upgrade!
-                        throw new BgaUserException( self::_("You must upgrade at least 1 tile") );
+                        throw new BgaUserException( clienttranslate("You must upgrade at least 1 tile") );
                     }
                 }
                 
                 if ($components[0] == 'payupgrade') {
                     if (! $this->canAfford($player, "coin", 1)) {
-                        throw new BgaUserException( self::_("You cannot afford that action") );
+                        throw new BgaUserException( clienttranslate("You cannot afford that action") );
                     }
                     $this->spend($player, "coin", 1);
                 }
@@ -187,22 +187,22 @@ trait SelectGoods {
                     }
                     if ($num_steps >= 1) {
                         if ($g["colour"] == "blue") {
-                            throw new BgaUserException( self::_("You cannot upgrade blue tiles") );
+                            throw new BgaUserException( clienttranslate("You cannot upgrade blue tiles") );
                         }
                     }
                     if ($components[0] == 'nwupgrade') {
                         if (in_array($g["type"], ["rune", "oil", "mead", "peas"]))
-                            throw new BgaUserException( self::_("You cannot upgrade tiles in the left column") );
+                            throw new BgaUserException( clienttranslate("You cannot upgrade tiles in the left column") );
                     } else if ($components[0] == 'meatupgrade') {
                         // Can only select meats!
                         if (! in_array($g["type"], ["whalemeat", "gamemeat", "saltmeat"])) {
-                            throw new BgaUserException( self::_("You can only upgrade meat goods with the Ship's Cook") );
+                            throw new BgaUserException( clienttranslate("You can only upgrade meat goods with the Ship's Cook") );
                         }
                     } else if ($components[0] == 'sameupgrade') {
                         // Can only upgrade 1 type!
                         // Note that preggers and non-preggers are considered the same
                         if (isset($last_type) && $last_type != $g["type"] && $last_type != "pregnant".$g["type"] && "pregnant".$last_type != $g["type"]) {
-                            throw new BgaUserException( self::_("You can only upgrade one type of good") );
+                            throw new BgaUserException( clienttranslate("You can only upgrade one type of good") );
                         }
                         $last_type = $g["type"];
                     }
@@ -226,13 +226,13 @@ trait SelectGoods {
             } else if ($components[0] == 'oncetwiceupgrade') {
 
                 if (count($upgrading_goods) > 2) {
-                    throw new BgaUserException( self::_("You cannot upgrade that many tiles") );
+                    throw new BgaUserException( clienttranslate("You cannot upgrade that many tiles") );
                 }
                 if (count($upgrading_goods2) > 1) {
-                    throw new BgaUserException( self::_("You cannot upgrade that many tiles") );
+                    throw new BgaUserException( clienttranslate("You cannot upgrade that many tiles") );
                 }
                 if (empty($upgrading_goods) && empty($upgrading_goods2)) {
-                    throw new BgaUserException( self::_("You must upgrade at least 1 tile") );
+                    throw new BgaUserException( clienttranslate("You must upgrade at least 1 tile") );
                 }
             } else {
                 throw new BgaVisibleSystemException( "Action does not exist ($command)" );
@@ -313,7 +313,7 @@ trait SelectGoods {
                         "clothing" => "treasurechest",
                     ];
                     if (! isset($nw_upgrades[$g["type"]])) {
-                        throw new BgaUserException( self::_("You cannot upgrade that tile") );
+                        throw new BgaUserException( clienttranslate("You cannot upgrade that tile") );
                     }
                     $new_good = $data_goods[$nw_upgrades[$g["type"]]];
                     $player_goods[] = $new_good;

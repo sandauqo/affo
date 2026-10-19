@@ -7,10 +7,10 @@ class Requirements {
 		$player_id = $player["id"];
 		if (in_array($action_id, [66, 67, 68, 128])) {
 			if (!self::canAffordToEmigrate($player)) {
-				throw new BgaUserException( FeastForOdin::totranslate("You cannot afford an emigration") );
+				throw new BgaUserException( clienttranslate("You cannot afford an emigration") );
 			}
             if (!self::hasSpaceToEmigrate($player, 2)) {
-				throw new BgaUserException( FeastForOdin::totranslate("You do not have room for an emigration") );
+				throw new BgaUserException( clienttranslate("You do not have room for an emigration") );
             }
 		}
 		
@@ -38,25 +38,25 @@ class Requirements {
 				}
 			}
 			if(! $found) {
-				throw new BgaUserException( FeastForOdin::totranslate("There are no actions in that column to copy") );
+				throw new BgaUserException( clienttranslate("There are no actions in that column to copy") );
 			}
 		}
 		
 		if ($action_id == 1) {
 			if (FeastForOdin::$game->getGameStateValue( 'num_sheds' ) <= 0) {
-				throw new BgaUserException( FeastForOdin::totranslate("There are no sheds left") );
+				throw new BgaUserException( clienttranslate("There are no sheds left") );
 			}
 		}
 		
 		if ($action_id == 2) {
 			if (FeastForOdin::$game->getGameStateValue( 'num_stonehouses' ) <= 0) {
-				throw new BgaUserException( FeastForOdin::totranslate("There are no stone houses left") );
+				throw new BgaUserException( clienttranslate("There are no stone houses left") );
 			}
 		}
 		
 		if ($action_id == 3) {
 			if (FeastForOdin::$game->getGameStateValue( 'num_longhouses' ) <= 0) {
-				throw new BgaUserException( FeastForOdin::totranslate("There are no long houses left") );
+				throw new BgaUserException( clienttranslate("There are no long houses left") );
 			}
 		}
 		
@@ -64,7 +64,7 @@ class Requirements {
 			// Must have room for big boat
 			// This will be checked later, but doing it now avoids issues with drawing occs and not being able to undo
 			if (FfoPlayer::countBigBoats($player) >= 4) {
-				throw new BgaUserException( FeastForOdin::totranslate("You do not have enough room to buy that boat") );
+				throw new BgaUserException( clienttranslate("You do not have enough room to buy that boat") );
 			}
 		}
 		if ($action_id == 124) {
@@ -168,9 +168,9 @@ class Requirements {
     private static function requirementsNotMetExeption() {
         // If an effect occurred before
         if (FeastForOdin::$game->getGameStateValue( 'resolved_effect' )) {
-            throw new BgaUserException( FeastForOdin::totranslate("After resolving this effect, you still won't meet the requirements for the action space") );
+            throw new BgaUserException( clienttranslate("After resolving this effect, you still won't meet the requirements for the action space") );
         } else {
-            throw new BgaUserException( FeastForOdin::totranslate("You do not meet the requirements for the action space") );
+            throw new BgaUserException( clienttranslate("You do not meet the requirements for the action space") );
         }
     }
 

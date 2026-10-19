@@ -36,13 +36,13 @@ trait SelectMode {
 		else if ($state['name'] == 'command-bosporustraveller') {
 			if ($mode_id == 0) {
 				if (! $this->canAfford($player, "coin", 3)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend($player, "coin", 3, 'occupation-174');
 				$this->gain($player, "silk", 1, 'occupation-174');
 			} else if ($mode_id == 1) {
 				if (! $this->canAfford($player, "coin", 4)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend($player, "coin", 4, 'occupation-174');
 				$this->gain($player, "spices", 1, 'occupation-174');
@@ -66,7 +66,7 @@ trait SelectMode {
 			
 			// 2. You must have enough cash
 			if (! self::canAfford( $player, "coin", $mode_id + 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$this->spend( $player, "coin", $mode_id + 1, 'occupation-88' );
 			
@@ -85,14 +85,14 @@ trait SelectMode {
 			if (Occupation::has($player_id, 102)) {
 				if ($mode_id == 0) {
 					if (! self::canAfford( $player, "gamemeat", 1 )) {
-						throw new BgaUserException( self::_("You cannot afford that action") );
+						throw new BgaUserException( clienttranslate("You cannot afford that action") );
 					}
 					
 					$this->spend( $player, "gamemeat", 1, 'occupation-102' );
 					$this->gain($player, "fur", 1, 'occupation-102');
 				} else if ($mode_id == 1) {
 					if (! self::canAfford( $player, "silk", 1 )) {
-						throw new BgaUserException( self::_("You cannot afford that action") );
+						throw new BgaUserException( clienttranslate("You cannot afford that action") );
 					}
 					
 					$this->spend( $player, "silk", 1, 'occupation-102' );
@@ -114,11 +114,11 @@ trait SelectMode {
 				$this->gain($player, "silverware", 1, 'occupation-73');
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "coin", 2 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				
 				if (! Forge::isAvailable("crucifix")) {
-					throw new BgaUserException( self::_("That good is not available") );
+					throw new BgaUserException( clienttranslate("That good is not available") );
 				}
 				$this->saveForge();
 				Forge::remove("crucifix");
@@ -130,11 +130,11 @@ trait SelectMode {
 				$this->gain($player, "crucifix", 1, 'occupation-73');
 			} else if ($mode_id == 2) {
 				if (! self::canAfford( $player, "coin", 5 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				
 				if (! Forge::isAvailable("grail")) {
-					throw new BgaUserException( self::_("That good is not available") );
+					throw new BgaUserException( clienttranslate("That good is not available") );
 				}
 				$this->saveForge();
 				Forge::remove("grail");
@@ -152,14 +152,14 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if (! self::canAfford( $player, "gamemeat", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				
 				$this->spend( $player, "gamemeat", 1, 'occupation-96' );
 				$this->gain($player, "whalemeat", 1, 'occupation-96');
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "whalemeat", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				
 				$this->spend( $player, "whalemeat", 1, 'occupation-96' );
@@ -195,19 +195,19 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if (! self::canAfford( $player, "coin", 2 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "coin", 2, 'occupation-86' );
 				$this->gain($player, "hide", 1, 'occupation-86');
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "coin", 4 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "coin", 4, 'occupation-86' );
 				$this->gain($player, "hide", 2, 'occupation-86');
 			} else if ($mode_id == 2) {
 				if (! self::canAfford( $player, "coin", 6 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "coin", 6, 'occupation-86' );
 				$this->gain($player, "hide", 3, 'occupation-86');
@@ -219,7 +219,7 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if (! Forge::isAvailable("crucifix")) {
-					throw new BgaUserException( self::_("That good is not available") );
+					throw new BgaUserException( clienttranslate("That good is not available") );
 				}
 				$this->saveForge();
 				Forge::remove("crucifix");
@@ -267,13 +267,13 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if (! self::canAfford( $player, "wood", 4 ) || ! self::canAfford( $player, "ore", 3 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "ore", 3, 'occupation-184' );
 				$this->spend( $player, "wood", 4, 'occupation-184' );
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "coin", 3 ) || ! self::canAfford( $player, "ore", 3 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				
 				$this->spend( $player, "ore", 3, 'occupation-184' );
@@ -292,13 +292,13 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if (! self::canAfford( $player, "coin", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "coin", 1, 'occupation-41' );
 				$this->gain( $player, "oil", 1, 'occupation-41' );
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "mead", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "mead", 1, 'occupation-41' );
 				$this->gain( $player, "oil", 1, 'occupation-41' );
@@ -314,20 +314,20 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				if ($this->getGameStateValue( 'num_sheds') <= 0) {
-					throw new BgaUserException( self::_("There are no more sheds left") );
+					throw new BgaUserException( clienttranslate("There are no more sheds left") );
 				}
 				$data_boards = self::getDataBoards();
 				FfoPlayer::addBoard($player, $data_boards['shed']);
 			} else if ($mode_id == 1) {
 				if (FfoPlayer::hasBuiltArtisanShed($player)) {
-					throw new BgaUserException( self::_("You have already built your artisan shed") );
+					throw new BgaUserException( clienttranslate("You have already built your artisan shed") );
 				}
 				$data_boards = self::getDataBoards();
 				$shed = explode("-", $player['artisan_shed'])[0];
 				FfoPlayer::addBoard($player, $data_boards[$shed]);
 			} else if ($mode_id == 2) {
 				if (FfoPlayer::hasBuiltArtisanShed($player)) {
-					throw new BgaUserException( self::_("You have already built your artisan shed") );
+					throw new BgaUserException( clienttranslate("You have already built your artisan shed") );
 				}
 				$data_boards = self::getDataBoards();
 				$shed = explode("-", $player['artisan_shed'])[1];
@@ -561,17 +561,17 @@ trait SelectMode {
 				}
 				if ($mode_id == 0) { //sheep
 					if (! self::canAfford( $player, "sheep", 1 ) && ! self::canAfford( $player, "pregnantsheep", 1 )) {
-						throw new BgaUserException( self::_("You do not have any sheep to slaughter!") );
+						throw new BgaUserException( clienttranslate("You do not have any sheep to slaughter!") );
 					}
 				}
 				if ($mode_id == 1) { //horse
 					if (! self::canAfford( $player, "horse", 1 ) && ! self::canAfford( $player, "pregnanthorse", 1 )) {
-						throw new BgaUserException( self::_("You do not have any horses to slaughter!") );
+						throw new BgaUserException( clienttranslate("You do not have any horses to slaughter!") );
 					}
 				}
 				if ($mode_id == 2) { //cattle
 					if (! self::canAfford( $player, "cattle", 1 ) && ! self::canAfford( $player, "pregnantcattle", 1 )) {
-						throw new BgaUserException( self::_("You do not have any cattle to slaughter!") );
+						throw new BgaUserException( clienttranslate("You do not have any cattle to slaughter!") );
 					}
 				}
 			}
@@ -593,13 +593,13 @@ trait SelectMode {
 		else if ($state['name'] == 'command-furmerchant') {
 			if ($mode_id == 0) {
 				if (! self::canAfford( $player, "gamemeat", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "gamemeat", 1, 'occupation-102' );
 				$this->gain($player, "fur", 1, 'occupation-102');
 			} else if ($mode_id == 1) {
 				if (! self::canAfford( $player, "silk", 1 )) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend( $player, "silk", 1, 'occupation-102' );
 				$this->gain($player, "fur", 1, 'occupation-102');
@@ -615,10 +615,10 @@ trait SelectMode {
 		else if ($state['name'] == 'command-buywhalingboatfifthcol') {
 			if ($mode_id == 0) {
 				if (!$this->canAfford($player, 'coin', 1) || !$this->canAfford($player, 'wood', 1)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				if (self::getAmount($player, 'whalingboat') >= 3) {
-					throw new BgaUserException( self::_("You do not have enough room for that boat.") );
+					throw new BgaUserException( clienttranslate("You do not have enough room for that boat.") );
 				}
 				$this->spend( $player, "coin", 1, 'action-5557' );
 				$this->spend( $player, "wood", 1, 'action-5557' );

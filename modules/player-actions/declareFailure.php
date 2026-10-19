@@ -31,7 +31,7 @@ trait DeclareFailure {
             
             if (in_array($hunt_type, ['game', 'snare', 'whales', 'whalesminor', 'game2'])) {
                 if ($base_value <= 0) {
-                    throw new BgaUserException( self::_("You cannot declare a failure with a result of 0") );
+                    throw new BgaUserException( clienttranslate("You cannot declare a failure with a result of 0") );
                 }
             }
             

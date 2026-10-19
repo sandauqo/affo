@@ -23,7 +23,7 @@ trait SelectIsland {
 		
 		$islands = Island::getAvailable();
 		if (! in_array($island, $args['islands'])) {
-			throw new BgaUserException( self::_("That island is not available") );
+			throw new BgaUserException( clienttranslate("That island is not available") );
 		}
 		
 		// 1. Island must be available
@@ -36,7 +36,7 @@ trait SelectIsland {
 		}
 		
 		if (! isset($found)) {
-			throw new BgaUserException( self::_("That island is not available") );
+			throw new BgaUserException( clienttranslate("That island is not available") );
 		}
 		
 		// 2. If there are coins on it, take the coins

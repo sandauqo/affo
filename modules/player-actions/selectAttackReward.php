@@ -109,7 +109,7 @@ trait SelectAttackReward {
 		}
 		
 		if ($raid_value < $min_value) {
-			throw new BgaUserException( self::_("Result too low to be a success") );
+			throw new BgaUserException( clienttranslate("Result too low to be a success") );
 		}
 		
 		if ($hunt_type == 'raid') {
@@ -129,7 +129,7 @@ trait SelectAttackReward {
 			$required_strength += $good2_strength;
 		}
 		if (! isset($good_strength) || $raid_value < $required_strength) {
-			throw new BgaUserException( self::_("Your strength is not high enough to take that, (have ${raid_value}, need ${required_strength})") );
+			throw new BgaUserException( clienttranslate("Your strength is not high enough to take that, (have ${raid_value}, need ${required_strength})") );
 		}
 				
 		// Give it to the player!

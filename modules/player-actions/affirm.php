@@ -25,7 +25,7 @@ trait Affirm {
 			$source = 'action-'.$action_id;
 			
 			if (! $this->canAfford( $player, $from, 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, $from, 1, $source );
@@ -48,7 +48,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 				
 			if (! $this->canAfford( $player, "coin", $round )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 				
 			$this->spend( $player, "coin", $round, 'occupation-60' );
@@ -71,7 +71,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "sheep", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "sheep", 1, 'occupation-63' );
@@ -85,12 +85,12 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 3 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			// Check horn is available
 			if (! Forge::isAvailable("horn")) {
-				throw new BgaUserException( self::_("That good is not available") );
+				throw new BgaUserException( clienttranslate("That good is not available") );
 			}
 			$this->saveForge();
 			Forge::remove("horn");
@@ -107,7 +107,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 4 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 4, 'occupation-67' );
@@ -135,7 +135,7 @@ trait Affirm {
 			}
 			
 			if ($snares < 2 || $spears < 2) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->saveWeapons();
@@ -154,13 +154,13 @@ trait Affirm {
 			$round = $this->getGameStateValue('round');
 			
 			if ($this->incGameStateValue( 'num_stonehouses', -1 ) < 0) {
-				throw new BgaUserException( self::_("There are no stone houses left") );
+				throw new BgaUserException( clienttranslate("There are no stone houses left") );
 			}
 			
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", $round )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 				
 			$this->spend( $player, "coin", $round, 'occupation-72' );
@@ -176,7 +176,7 @@ trait Affirm {
 			
 			if (! $this->canAfford( $player, "grain", 1 ) ||
 				! $this->canAfford( $player, "coin", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "grain", 1, 'occupation-74' );
@@ -190,7 +190,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 1, 'occupation-75' );
@@ -203,7 +203,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "cattle", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "cattle", 1, 'occupation-79' );
@@ -215,7 +215,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 2, 'occupation-80' );
@@ -239,7 +239,7 @@ trait Affirm {
 				$cost = 0;
 			}
 			if (! $this->canAfford($player, "coin", floor($cost))) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$this->spend( $player, "coin", floor($cost), 'occupation-81' );
 			FfoPlayer::addShip( $player, "longship", 0, 'occupation-81' );
@@ -265,7 +265,7 @@ trait Affirm {
 				$cost -= 2;
 			}
 			if (! $this->canAfford($player, "coin", floor($cost))) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$this->spend( $player, "coin", floor($cost), 'occupation-82' );
 			FfoPlayer::addShip( $player, "longship", 0, 'occupation-82' );
@@ -276,7 +276,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "flax", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "flax", 1, 'occupation-171' );
@@ -289,7 +289,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "oil", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "oil", 2, 'occupation-94' );
@@ -302,13 +302,13 @@ trait Affirm {
 			$action_id = $this->getGameStateValue('action_id');
 
 			if ($action_id > 1000) {
-				throw new BgaUserException( self::_("Ironsmith cannot be used with the fifth action column (final action)."));
+				throw new BgaUserException( clienttranslate("Ironsmith cannot be used with the fifth action column (final action)."));
 			}
 
 			$player = FfoPlayer::getFullPlayer( $player_id );
 
 			if (! $this->canAfford( $player, "coin", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 1, 'occupation-108' );
@@ -330,7 +330,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 3 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 3, 'occupation-114' );
@@ -342,7 +342,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 2, 'occupation-124' );
@@ -367,7 +367,7 @@ trait Affirm {
 			}
 			
 			if (count($to_spend) < 2) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->saveWeapons();
@@ -405,7 +405,7 @@ trait Affirm {
 			}
 			
 			if (count($to_spend) < 1) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->saveWeapons();
@@ -426,7 +426,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 			
 			if (! $this->canAfford( $player, "coin", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 2, 'occupation-144' );
@@ -438,7 +438,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer( $player_id );
 				
 			if (! $this->canAfford( $player, "coin", 3 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			
 			$this->spend( $player, "coin", 3, 'occupation-148' );
@@ -484,7 +484,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer($player_id);
 				
 			if (! self::canAfford( $player, "coin", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$this->spend( $player, "coin", 1, 'occupation-85' );
 			Action::unshift( ["hunt-game"] );
@@ -500,7 +500,7 @@ trait Affirm {
 			$player = FfoPlayer::getFullPlayer($player_id);
 			
 			if (! self::canAfford( $player, "coin", 2 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$this->spend( $player, "coin", 2, 'occupation-85' );
 			Action::unshift( ["hunt-snare-0"] );
@@ -530,7 +530,7 @@ trait Affirm {
 			if ($action_id == 5554) {
 				$player = FfoPlayer::getFullPlayer($player_id);
 				if (!self::canAfford($player, "ore", 1)) {
-					throw new BgaUserException( self::_("You need to remove 1 ore from any of your ships") );
+					throw new BgaUserException( clienttranslate("You need to remove 1 ore from any of your ships") );
 				}
 			}
 		}

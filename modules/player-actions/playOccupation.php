@@ -21,14 +21,14 @@ trait PlayOccupation {
 			if ($tutor) {
 				$player = FfoPlayer::getFullPlayer( $player_id );
 				if (!$this->canAfford($player, 'coin', 1)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 
 				// Must be your turn
 				$actives = $this->gamestate->getActivePlayerList();
 				$currentPlayer = self::getCurrentPlayerId();
 				if (! in_array($currentPlayer, $actives)) {
-					throw new BgaUserException( self::_("It is not your turn") );
+					throw new BgaUserException( clienttranslate("It is not your turn") );
 				}
 			}
 

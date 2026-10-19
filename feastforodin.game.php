@@ -274,7 +274,7 @@ class FeastForOdin extends Table
 		if ($type == "resource") {
 			$player[$asset] -= $amount;
 			if ($player[$asset] < 0) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			self::notifyAllPlayers( "diffResources", '', array(
 				'player_id' => $player["id"],
@@ -308,7 +308,7 @@ class FeastForOdin extends Table
 				}
 			}
 			if ($num < $amount) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			self::notifyAllPlayers( "spendGoods", '', array(
 				'player_id' => $player["id"],
@@ -1390,9 +1390,6 @@ class FeastForOdin extends Table
 	public static function getValue($sql)
 	{
 		return self::get()->getUniqueValueFromDB($sql);
-	}
-	public static function totranslate($text) {
-		return self::get()->_($text);
 	}
 
 }

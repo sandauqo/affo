@@ -29,7 +29,7 @@ trait SelectStrip {
 			$taken_ids = explode(",", $taken);
 			foreach ($taken_ids as $i) {
 				if ($i == $strip_id) {
-					throw new BgaUserException( self::_("You have already used that mountain strip this turn") );
+					throw new BgaUserException( clienttranslate("You have already used that mountain strip this turn") );
 				}
 			}
 			
@@ -66,7 +66,7 @@ trait SelectStrip {
 
 			if ($state["name"] == "command-armedfighter") {
 				if (! in_array($good, ["ore", "stone"])) {
-					throw new BgaUserException( self::_("You can only take ore or stone") );
+					throw new BgaUserException( clienttranslate("You can only take ore or stone") );
 				}
 			}
 			

@@ -7,7 +7,7 @@ trait SelectForSlaughter {
 		$actionId = $this->getGameStateValue('action_id');
 
 		if(!in_array($animal, ['sheep', 'pregnantsheep', 'horse', 'pregnanthorse', 'cattle', 'pregnantcattle', 'pig'])) {
-			throw new BgaUserException( self::_("Wrong selection for slaughter") );
+			throw new BgaUserException( clienttranslate("Wrong selection for slaughter") );
 		}
 		$player_id = self::getCurrentPlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);

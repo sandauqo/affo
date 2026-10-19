@@ -19,7 +19,7 @@ trait Reroll {
 				str_replace(
 					'${num}',
 					$max_num_rolls,
-					self::_('You only have ${num} rolls')
+					clienttranslate('You only have ${num} rolls')
 				)
 			);
 		}

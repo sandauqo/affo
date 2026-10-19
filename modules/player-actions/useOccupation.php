@@ -9,7 +9,7 @@ trait UseOccupation {
 		// Must be your turn
 		$actives = $this->gamestate->getActivePlayerList();
 		if (! in_array($player_id, $actives)) {
-			throw new BgaUserException( self::_("It is not your turn") );
+			throw new BgaUserException( clienttranslate("It is not your turn") );
 		}
 		
 		// Must have played this occupation
@@ -47,7 +47,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 45) {
@@ -76,7 +76,7 @@ trait UseOccupation {
 				}
 
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 47) {
@@ -92,7 +92,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 48) {
@@ -108,7 +108,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 49) {
@@ -123,7 +123,7 @@ trait UseOccupation {
 				// Gain
 				$this->stHarvestGoods( $player_id, true );
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 50) {
@@ -137,7 +137,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 51) {
@@ -158,7 +158,7 @@ trait UseOccupation {
 					throw new BgaVisibleSystemException( "Invalid mode ($mode_id) for $state[name]" );
 				}
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			FfoPlayer::saveFullPlayer($player);
 		} 
@@ -168,12 +168,12 @@ trait UseOccupation {
 		else if ($ability == 53) {
 			// Farm Shop Owner
 			if (!self::canAfford( $player, "coin", 1 )) {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			$allowed_types = ['peas', 'flax', 'grain', 'beans', 'cabbage', 'fruits', 'herbs'];
 
 			if (!in_array($data, $allowed_types)) {
-				throw new BgaUserException( self::_("You cannot upgrade that good") );
+				throw new BgaUserException( clienttranslate("You cannot upgrade that good") );
 			}
 			$this->spend( $player, "coin", 1, 'occupation-53' );
 			$this->spend( $player, $data, 1, 'occupation-53' );
@@ -198,7 +198,7 @@ trait UseOccupation {
 					throw new BgaVisibleSystemException( "Invalid mode ($mode_id) for $state[name]" );
 				}
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 			FfoPlayer::saveFullPlayer($player);
 		} 
@@ -217,7 +217,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 56) {
@@ -283,7 +283,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 58) {
@@ -299,7 +299,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 59) {
@@ -317,7 +317,7 @@ trait UseOccupation {
 				
 				FfoPlayer::saveFullPlayer($player);
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 46) {
@@ -343,7 +343,7 @@ trait UseOccupation {
 				
 				$this->updatePlayerScore( $player );
 			} else {
-				throw new BgaUserException( self::_("You cannot afford that action") );
+				throw new BgaUserException( clienttranslate("You cannot afford that action") );
 			}
 		} 
 		else if ($ability == 187) {
@@ -351,11 +351,11 @@ trait UseOccupation {
 			if ($mode_id == 0) {
 				// 1. Check it's your turn for a Viking action
 				if ($this->getString("finishedTransition") != "finished") {
-					throw new BgaUserException( self::_("You can only use this action during a Viking action") );
+					throw new BgaUserException( clienttranslate("You can only use this action during a Viking action") );
 				}
 				// 2. Check it's in the forge
 				if (! Forge::isAvailable("belt")) {
-					throw new BgaUserException( self::_("That good is not available") );
+					throw new BgaUserException( clienttranslate("That good is not available") );
 				}
 				// 3. Remove it from the forge
 				$this->saveForge();
@@ -376,7 +376,7 @@ trait UseOccupation {
 		else if ($ability == 182) {
 			// Single-use only!
 			if (! empty($found["used"])) {
-				throw new BgaUserException( self::_("You have already used that occupation") );
+				throw new BgaUserException( clienttranslate("You have already used that occupation") );
 			}
 			
 			$this->saveOccupations( $player_id );
@@ -390,18 +390,18 @@ trait UseOccupation {
 			}
 			
 			if ($houses < 2) {
-				throw new BgaUserException( self::_("You do not meet the requirements for that action") );
+				throw new BgaUserException( clienttranslate("You do not meet the requirements for that action") );
 			}
 			
 			if ($mode_id == 0) {
 				if (! $this->canAfford($player, "wood", 2)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend($player, "wood", 2, 'occupation-182');
 				$this->gain($player, "spices", 1, 'occupation-182');
 			} else if ($mode_id == 1) {
 				if (! $this->canAfford($player, "wood", 5)) {
-					throw new BgaUserException( self::_("You cannot afford that action") );
+					throw new BgaUserException( clienttranslate("You cannot afford that action") );
 				}
 				$this->spend($player, "wood", 5, 'occupation-182');
 				$this->gain($player, "spices", 2, 'occupation-182');
@@ -412,10 +412,10 @@ trait UseOccupation {
 		}
 		else if ($ability == 39) {
 			// Modifier
-			throw new BgaUserException( self::_("Click on ore equipped to a boat to remove it") );
+			throw new BgaUserException( clienttranslate("Click on ore equipped to a boat to remove it") );
 		} 
 		else {
-			throw new BgaUserException( self::_("That occupation cannot be used at this time") );
+			throw new BgaUserException( clienttranslate("That occupation cannot be used at this time") );
 		}
 	}
 

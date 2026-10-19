@@ -64,13 +64,13 @@ class Action
 		if (FeastForOdin::$game->isNorwegiansExpansion()) {
 			// not a Norwegians action!
 			if (!in_array($actionId, self::getNorwegiansActions())) {
-				throw new BgaUserException( FeastForOdin::totranslate("That action is not available.") );
+				throw new BgaUserException( clienttranslate("That action is not available.") );
 
 			}
 		} else {
 			// not a base game action!
 			if (!in_array($actionId, self::getBaseGameActions())) {
-				throw new BgaUserException( FeastForOdin::totranslate("That action is not available.") );
+				throw new BgaUserException( clienttranslate("That action is not available.") );
 			}
 
 		}

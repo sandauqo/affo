@@ -2055,7 +2055,7 @@ trait StateFunctions {
 		$intersect = array_intersect($args['islands'], $island_names);
 
 		if (count($intersect) == 0) {
-			throw new BgaUserException( FeastForOdin::totranslate("None of those islands is available") );
+			throw new BgaUserException( clienttranslate("None of those islands is available") );
 		}
 	}
 
