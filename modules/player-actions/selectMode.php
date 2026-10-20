@@ -243,10 +243,16 @@ trait SelectMode {
 				// TODO : Not quite right if you have linked actions.
 					// Should linked actions go first?
 				$action_id = $this->getGameStateValue('action_id');
-				Requirements::check($action_id, $player);
+				if ($action_id != 125) {
+					// 125 discards first, so its hand requirement was already checked
+					Requirements::check($action_id, $player);
+				}
 				Action::unshift( ["draw-occupation"] );
 			} else if ($mode_id == 1) {
 				// Play occupation
+				if (count(Occupation::getHand($player_id)) == 0) {
+					throw new BgaUserException( clienttranslate("You have no occupations in your hand to play") );
+				}
 				Action::unshift( ["play-occupation"] );
 			} else {
 				throw new BgaVisibleSystemException( "Invalid mode ($mode_id) for $state[name]" );
@@ -564,7 +570,9 @@ trait SelectMode {
 				}
 			}
 			if ($mode_id == 1) {
-				Action::push(["draw-occupation", "draw-occupation", "draw-occupation"]);
+				// Preceptor: decide for each occupation individually
+				$draw = Occupation::has($player_id, 99) ? "state-preceptor" : "draw-occupation";
+				Action::push([$draw, $draw, $draw]);
 			}
 		}
 		else if ($state['name'] == 'command-furmerchant') {
