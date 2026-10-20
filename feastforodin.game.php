@@ -15,6 +15,7 @@ include "modules/helper.state-functions.php";
 include "modules/helper.state-arguments.php";
 include "modules/helper.player-actions.php";
 include "modules/helper.undo.php";
+include "modules/helper.easter-egg.php";
 
 
 class FeastForOdin extends Table
@@ -23,6 +24,7 @@ class FeastForOdin extends Table
 	use StateArguments;
 	use PlayerActions;
 	use Undo;
+	use EasterEgg;
 	
 	static $game;
 
@@ -118,6 +120,9 @@ class FeastForOdin extends Table
 			'goBack' => 411,
 			'waterford_bonus_knarr_skip_179_occ' => 412,
 			'altar_available' => 413,
+			// bitmask of easter egg goods already issued (berries=1, eggs=2, amber=4, gullgubber=8)
+			'ee_issued' => 414,
+			'ee_issued_saved' => 415,
 		]);
 	}
 	
@@ -240,7 +245,7 @@ class FeastForOdin extends Table
 		} else if ($type == "good") {
 			$num = 0;
 			foreach ($player["goods"] as $g) {
-				if ($g["type"] == $asset || $g["type"] == "pregnant$asset") {
+				if (self::baseGoodType($g["type"]) == self::baseGoodType($asset) || $g["type"] == "pregnant$asset") {
 					$num++;
 				}
 			}
@@ -286,9 +291,10 @@ class FeastForOdin extends Table
 			$num = 0;
 			$spent = [];
 			foreach ($player["goods"] as $k => $g) {
-				if ($g["type"] == $asset) {
+				if (self::baseGoodType($g["type"]) == self::baseGoodType($asset)) {
 					$num++;
 					$spent[] = $g;
+					$this->releaseEasterEgg($g);
 					unset($player["goods"][$k]);
 					if ($num == $amount) {
 						break;
@@ -344,8 +350,9 @@ class FeastForOdin extends Table
 				if (! isset($data_goods[$asset])) {
 					throw new BgaVisibleSystemException( "Good $asset not found" );
 				}
-				$new_goods[] = $data_goods[$asset];
-				$player["goods"][] = $data_goods[$asset];
+				$new_good = $this->rollEasterEgg($data_goods[$asset]);
+				$new_goods[] = $new_good;
+				$player["goods"][] = $new_good;
 			}
 			self::notifyAllPlayers( "takeGoods", '', array(
 				'player_id' => $player["id"],
@@ -568,13 +575,7 @@ class FeastForOdin extends Table
 	public function debug_good(string $good) {
 		$player_id = self::getActivePlayerId();
 		$player = FfoPlayer::getFullPlayer($player_id);
-		$data_goods = self::getDataGoods();
-		$player["goods"][] = $data_goods[$good];
-		self::notifyAllPlayers( "takeGoods", '', array(
-			'player_id' => $player_id,
-			'goods' => [$data_goods[$good]],
-			'source' => null
-		));
+		$this->gain($player, $good, 1, null, false);
 		FfoPlayer::saveFullPlayer($player);
 	}
 	
@@ -810,6 +811,9 @@ class FeastForOdin extends Table
 		self::setGameStateInitialValue( 'waterford_bonus_knarr_skip_179_occ', 0 );
 
 		self::setGameStateInitialValue( 'altar_available', 1 );
+
+		self::setGameStateInitialValue( 'ee_issued', 0 );
+		self::setGameStateInitialValue( 'ee_issued_saved', 0 );
 
 		if (count($players) == 4 && !$this->isNorwegiansExpansion()) {
 			self::setGameStateInitialValue( 'left_action_column', bga_rand( 1, 2 ) );
@@ -1364,6 +1368,8 @@ class FeastForOdin extends Table
 		  ADD COLUMN `extra` LONGTEXT; ";
 		self::applyDbUpgradeToAllDB( $sql );
 	  }
+	  // Easter egg tracking globals for games created before they existed
+	  self::applyDbUpgradeToAllDB( "INSERT IGNORE INTO DBPREFIX_global (global_id, global_value) VALUES (414, 0), (415, 0)" );
 	}
 	
 	// String globals

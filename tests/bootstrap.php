@@ -53,7 +53,7 @@ class FeastForOdin
         } elseif ($type == "good") {
             $num = 0;
             foreach ($player["goods"] as $g) {
-                if ($g["type"] == $asset || $g["type"] == "pregnant$asset") {
+                if (preg_replace('/_ee$/', '', $g["type"]) == preg_replace('/_ee$/', '', $asset) || $g["type"] == "pregnant$asset") {
                     $num++;
                 }
             }
@@ -87,11 +87,22 @@ function clienttranslate($text)
     return $text;
 }
 
+/** Tests queue the values bga_rand() should return; falls back to the upper bound (a "miss" for odds rolls). */
+$GLOBALS['bga_rand_queue'] = [];
+$GLOBALS['bga_rand_calls'] = [];
+
+function bga_rand($min, $max)
+{
+    $GLOBALS['bga_rand_calls'][] = [$min, $max];
+    return array_shift($GLOBALS['bga_rand_queue']) ?? $max;
+}
+
 require_once dirname(__DIR__) . '/modules/class.action.php';
 require_once dirname(__DIR__) . '/modules/class.occupation.php';
 require_once dirname(__DIR__) . '/modules/class.requirements.php';
 require_once __DIR__ . '/Support/stubs.php';
 require_once dirname(__DIR__) . '/modules/helper.undo.php';
+require_once dirname(__DIR__) . '/modules/helper.easter-egg.php';
 require_once dirname(__DIR__) . '/modules/state-functions/doCommand.php';
 require_once dirname(__DIR__) . '/modules/player-actions/selectMode.php';
 require_once dirname(__DIR__) . '/modules/player-actions/selectShip.php';

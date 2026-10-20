@@ -29,12 +29,12 @@ class FfoPlayer {
 			$values[] = "($player_id, 'feast', 6, 1)";
 			
 			for ($i = 0; $i < 5; $i++) {
-				$values[] = "($player_id, 'thing', NULL, 0)";
+				$values[] = "($player_id, 'thing', 0, 0)";
 			}
 			
 			$number_on_bench = $short_game ? 6 : 5;
 			for ($i = 0; $i < $number_on_bench; $i++) {
-				$values[] = "($player_id, 'bench', NULL, 1)";
+				$values[] = "($player_id, 'bench', 0, 1)";
 			}
 		} else {
 			// 12 for each player. Some on round spaces (depends on short/long), rest on Thing.

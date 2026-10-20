@@ -824,7 +824,7 @@ return [
 		"cells" => [],
 	],
 	// the following 4 items are "easter egg" items 
-	// exact same execpt for their visuals and there can be only one of each in the game
+	// exact same except for their visuals and there can be only one of each in the game
 	// 1/12 chance for orange/red tiles and 1/9 change for green/blue (as per physical game assets)
 	"berries_ee" => [
 		"type" => "berries_ee",

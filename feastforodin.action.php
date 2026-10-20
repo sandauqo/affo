@@ -275,7 +275,7 @@ class action_feastforodin extends APP_GameAction
       $goods = explode("-", $goodsList);
 
       foreach ($goods as $g) {
-        if (! preg_match('/^[a-z]+$/', $g)) {
+        if (! preg_match('/^[a-z]+(_ee)?$/', $g)) {
           throw new BgaVisibleSystemException( "Invalid goods selection");
         }
       }
@@ -289,7 +289,7 @@ class action_feastforodin extends APP_GameAction
       $goods2 = explode("-", $goodsList2);
 
       foreach ($goods2 as $g) {
-        if (! preg_match('/^[a-z]+$/', $g)) {
+        if (! preg_match('/^[a-z]+(_ee)?$/', $g)) {
           throw new BgaVisibleSystemException( "Invalid goods selection");
         }
       }
@@ -360,7 +360,7 @@ class action_feastforodin extends APP_GameAction
       $goods = explode("-", $goodsList);
 
       foreach ($goods as $g) {
-        if (! preg_match('/^[a-z]+$/', $g)) {
+        if (! preg_match('/^[a-z]+(_ee)?$/', $g)) {
           throw new BgaVisibleSystemException( "Invalid resources selection");
         }
       }

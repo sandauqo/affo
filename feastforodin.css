@@ -2054,7 +2054,7 @@
 .ffo-good.ffo-good-eggs .ffo-good-image {
   background-image: url(img/mini_exp_2.png);
   background-size: 2160% 1250%;
-  background-position: 74.76% 18.8%;
+  background-position: 79.66% 18.8%;
   height: calc(var(--cell-size) * 1);
   width: calc(var(--cell-size) * 1);
 }
@@ -2062,7 +2062,7 @@
 .ffo-good.ffo-good-eggs_ee .ffo-good-image {
   background-image: url(img/mini_exp_2.png);
   background-size: 2160% 1250%;
-  background-position: 79.66% 18.8%;
+  background-position: 74.66% 18.8%;
   height: calc(var(--cell-size) * 1);
   width: calc(var(--cell-size) * 1);
 }

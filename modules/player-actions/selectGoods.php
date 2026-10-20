@@ -107,6 +107,7 @@ trait SelectGoods {
                     if ($pg["type"] == $t) {
                         $upgrading_goods[] = $pg;
                         $asset_diffs[] = "($player_id, '$pg[type]', -1, '$source')";
+                        $this->releaseEasterEgg($pg);
                         unset($player_goods[$k]);
                         continue 2;
                     }
@@ -121,6 +122,7 @@ trait SelectGoods {
                         if ($pg["type"] == $t) {
                             $upgrading_goods2[] = $pg;
                             $asset_diffs[] = "($player_id, '$pg[type]', -1, '$source')";
+                            $this->releaseEasterEgg($pg);
                             unset($player_goods[$k]);
                             continue 2;
                         }
@@ -281,6 +283,7 @@ trait SelectGoods {
                         }
                         $new_good = self::findGood($g["cols"], $g["rows"], $colour);
                     }
+                    $new_good = $this->rollEasterEgg($new_good);
                     $player_goods[] = $new_good;
                     $new_goods[] = $new_good;
                     $asset_diffs[] = "($player_id, '$new_good[type]', 1, '$source')";
@@ -330,6 +333,7 @@ trait SelectGoods {
                             break;
                         }
                     }
+                    $new_good = $this->rollEasterEgg($new_good);
                     $player_goods[] = $new_good;
                     $new_goods[] = $new_good;
                     $asset_diffs[] = "($player_id, '$new_good[type]', 1, '$source')";
@@ -343,6 +347,7 @@ trait SelectGoods {
                             break;
                         }
                     }
+                    $new_good = $this->rollEasterEgg($new_good);
                     $player_goods[] = $new_good;
                     $new_goods[] = $new_good;
                     $asset_diffs[] = "($player_id, '$new_good[type]', 1, '$source')";
@@ -353,12 +358,13 @@ trait SelectGoods {
                 foreach ($upgrading_goods as $g) {
                     $new_good = $g;
                     for ($i = 0; $i < $num_steps; $i++) {
-                        $new_good = $data_goods[$new_good["upgrade"]]; // add easter eggs here
+                        $new_good = $data_goods[$new_good["upgrade"]];
                         // If the new good is blue, stop!
                         if ($new_good["colour"] == "blue") {
                             break;
                         }
                     }
+                    $new_good = $this->rollEasterEgg($new_good);
                     $player_goods[] = $new_good;
                     $new_goods[] = $new_good;
                     $asset_diffs[] = "($player_id, '$new_good[type]', 1, '$source')";

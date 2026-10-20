@@ -54,7 +54,7 @@ trait EquipBoard {
 			$player_goods = &$player["goods"];
 			$goodFound = false;
 			foreach ($player_goods as $good) {
-				if ($good["type"] == $asset) {
+				if (self::baseGoodType($good["type"]) == self::baseGoodType($asset)) {
 					$goodFound = true;
 				}
 			}

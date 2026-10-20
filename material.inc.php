@@ -137,6 +137,10 @@ $this->m_goods = array(
     'eggs' => ['name' => clienttranslate('Eggs')],
     'amber' => ['name' => clienttranslate('Amber')],
     'gullgubber' => ['name' => clienttranslate('Gullgubber')],
+    'berries_ee' => ['name' => clienttranslate('Berries')],
+    'eggs_ee' => ['name' => clienttranslate('Eggs')],
+    'amber_ee' => ['name' => clienttranslate('Amber')],
+    'gullgubber_ee' => ['name' => clienttranslate('Gullgubber')],
 
     'table' => ['name' => clienttranslate('Table')],
     'tree' => ['name' => clienttranslate('Tree')],

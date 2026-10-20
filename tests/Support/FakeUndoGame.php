@@ -7,8 +7,11 @@
 class FakeUndoGame
 {
     use Undo;
+    use EasterEgg;
 
     public array $state = [
+        'ee_issued' => 0,
+        'ee_issued_saved' => 0,
         'undo_supported' => 1,
         'can_undo' => 1,
         'just_restored' => 0,

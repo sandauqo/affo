@@ -1213,6 +1213,9 @@ trait StateFunctions {
 					}
 					
 					// Clear board
+					foreach ($board["goods"] as $g) {
+						$this->releaseEasterEgg($g);
+					}
 					$board["goods"] = [];
 				}
 			}
@@ -1459,17 +1462,10 @@ trait StateFunctions {
 									}
 								}
 													
-								$goodToGiveOut = $data_goods[$b];
-
-								if (in_array($goodToGiveOut, ['berries', 'eggs', 'amber', 'gullgubber'])) {
-									// easter egg thing 
-								}
+								$goodToGiveOut = $this->rollEasterEgg($data_goods[$b]);
 
 								$gain[] = $goodToGiveOut;
 								$player["goods"][] = $goodToGiveOut;
-
-								// $gain[] = $data_goods[$b];
-								// $player["goods"][] = $data_goods[$b];
 								
 								$key = "inject_good_$b";
 								$goods_log[] = '${'.$key.'}';

@@ -44,6 +44,8 @@ trait Undo {
 
 		$this->setGameStateValue('num_vp_token_4_saved', $this->getGameStateValue('num_vp_token_4'));
 		$this->setGameStateValue('num_vp_token_3_saved', $this->getGameStateValue('num_vp_token_3'));
+
+		$this->setGameStateValue('ee_issued_saved', $this->getGameStateValue('ee_issued'));
 	}
 	
 	// Snapshots the whole occupation table (all players and the deck), so the
@@ -249,6 +251,8 @@ trait Undo {
 
 		$this->setGameStateValue('num_vp_token_4', $this->getGameStateValue('num_vp_token_4_saved'));
 		$this->setGameStateValue('num_vp_token_3', $this->getGameStateValue('num_vp_token_3_saved'));
+
+		$this->setGameStateValue('ee_issued', $this->getGameStateValue('ee_issued_saved'));
 
 		// Notif to update player!
 		$players = self::loadPlayersBasicInfos();
