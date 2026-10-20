@@ -156,15 +156,15 @@ class HousesShipsActionsTest extends TestCase
         }
     }
 
-    public function testPreceptorReplacesDrawOccupationOnThreeMeepleActions(): void
+    public function testPreceptorKeepsBeforeOrAfterChoiceOnThreeMeepleActions(): void
     {
         $this->g->addOccupation('played', 1, 99);
         foreach ([3, 7] as $id) {
-            $this->assertSame(['linkedactions', 'state-preceptor'], Action::getModifiedAction($id, 1)[0]->preCommands);
+            $this->assertSame(['linkedactions', 'beforeorafter-draw-occupation'], Action::getModifiedAction($id, 1)[0]->preCommands);
         }
         $this->g->norwegians = true;
         foreach ([91, 5559] as $id) {
-            $this->assertSame(['linkedactions', 'state-preceptor'], Action::getModifiedAction($id, 1)[0]->preCommands);
+            $this->assertSame(['linkedactions', 'beforeorafter-draw-occupation'], Action::getModifiedAction($id, 1)[0]->preCommands);
         }
         // not a draw action: unchanged
         $this->assertSame(self::PRE_4, Action::getModifiedAction(4, 1)[0]->preCommands);

@@ -11,7 +11,7 @@ trait SelectMode {
 
 		if ($state['name'] == 'command-beforeorafter-draw') {
 			if ($mode_id == 0) {
-				Action::unshift(["draw-occupation"]);
+				Action::unshift([Occupation::has($player_id, 99) ? "state-preceptor" : "draw-occupation"]);
 			} else {
 				self::setGameStateValue( 'pending_draw', 1 );
 			}
@@ -239,14 +239,7 @@ trait SelectMode {
 			
 			if ($mode_id == 0) {
 				// Draw occupation
-				// Must check at this point if you can afford...
-				// TODO : Not quite right if you have linked actions.
-					// Should linked actions go first?
-				$action_id = $this->getGameStateValue('action_id');
-				if ($action_id != 125) {
-					// 125 discards first, so its hand requirement was already checked
-					Requirements::check($action_id, $player);
-				}
+				// The 3rd column's before/after requirement check already happened in beforeorafter-draw
 				Action::unshift( ["draw-occupation"] );
 			} else if ($mode_id == 1) {
 				// Play occupation
@@ -552,7 +545,12 @@ trait SelectMode {
 			}
 			
 			if (! in_array($action_id, [73, 74, 75, 76])) {
-				// Don't do pending_play for clone action
+				// Don't do pending_draw/pending_play for clone action
+				if (self::getGameStateValue( 'pending_draw' ) && Occupation::has($player_id, 99)) {
+					// Preceptor: choose draw or play after the action (otherwise drawn on confirm)
+					self::setGameStateValue( 'pending_draw', 0 );
+					$after_action[] = 'state-preceptor';
+				}
 				if (self::getGameStateValue( 'pending_play' )) {
 					self::setGameStateValue( 'pending_play', 0 );
 					$after_action[] = 'play-occupation';

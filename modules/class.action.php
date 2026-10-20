@@ -85,16 +85,17 @@ class Action
 		}
 		
 		if (Occupation::has($playerId, 99)) {
-			// Swap draw occupation for command-preceptor
+			// Swap draw occupation for command-preceptor.
+			// beforeorafter-draw-occupation is kept so the before/after choice remains; the swap happens when it resolves.
 			foreach ($actions as &$a) {
 				foreach ($a->commands as $key => $command) {
-					if ($command == "draw-occupation" || $command == "beforeorafter-draw-occupation") {
+					if ($command == "draw-occupation") {
 						$a->commands[$key] = "state-preceptor";
 					}
 				}
 				
 				foreach ($a->preCommands as $key => $command) {
-					if ($command == "draw-occupation" || $command == "beforeorafter-draw-occupation") {
+					if ($command == "draw-occupation") {
 						$a->preCommands[$key] = "state-preceptor";
 					}
 				}
