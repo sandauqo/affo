@@ -37,9 +37,10 @@ trait EasterEgg
 		if ($issued & $bit) {
 			return $good;
 		}
-//		$chance = in_array($good["colour"], ['orange', 'red']) ? 12 : 9;
-		$chance = in_array($good["colour"], ['orange', 'red']) ? 3 : 2;
-		if (bga_rand(1, $chance) !== 1) {
+		$oneInNumberForOrangeAndRed = 12;
+		$oneInNumberForGreenAndBlue = 9;
+		$oneInNumber = in_array($good["colour"], ['orange', 'red']) ? $oneInNumberForOrangeAndRed : $oneInNumberForGreenAndBlue;
+		if (bga_rand(1, $oneInNumber) !== 1) {
 			return $good;
 		}
 		$this->setGameStateValue('ee_issued', $issued | $bit);
