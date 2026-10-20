@@ -218,6 +218,8 @@ trait Undo {
 		  SELECT * FROM meeple_saved");
 		  
 		self::DbQuery("DELETE FROM command_queue WHERE 1");
+		// Drop unflushed resource diffs from the undone actions so they are not logged again
+		self::DbQuery("DELETE FROM asset_diffs WHERE 1");
 		
 		// Player
 		$player_saved = self::getObject("SELECT * FROM player_saved WHERE player_id = $player_id");

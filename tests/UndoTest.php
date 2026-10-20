@@ -503,6 +503,23 @@ class UndoTest extends TestCase
         $this->assertSame(1, $this->game->notifications[0]['args']['player_id']);
     }
 
+    public function testRestoreDiscardsPendingAssetDiffsSoRepeatedSpendIsNotLoggedTwice(): void
+    {
+        $this->startTurn(1);
+
+        // Latecomer payment made before the undo, still waiting to be flushed to the log
+        $this->game->exec("INSERT INTO asset_diffs (player_id, asset, amount, source) VALUES (1, 'coin', -1, 'occupation-91')");
+        $this->game->restoreState(1);
+        $this->assertSame([], $this->game->rows("SELECT * FROM asset_diffs"));
+
+        // Paying again after the undo leaves a single -1 diff
+        $this->game->exec("INSERT INTO asset_diffs (player_id, asset, amount, source) VALUES (1, 'coin', -1, 'occupation-91')");
+        $this->assertSame(
+            -1,
+            (int) $this->game->rows("SELECT SUM(amount) AS total FROM asset_diffs")[0]['total']
+        );
+    }
+
     public function testCannotUndoWhenNotAllowed(): void
     {
         $this->startTurn(1);

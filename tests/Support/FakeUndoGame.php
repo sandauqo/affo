@@ -60,6 +60,7 @@ class FakeUndoGame
             $this->exec("CREATE TABLE {$table}_saved (k TEXT, v TEXT)");
         }
         $this->exec("CREATE TABLE command_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT)");
+        $this->exec("CREATE TABLE asset_diffs (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, asset TEXT, amount INTEGER, source TEXT)");
     }
 
     // ---- helpers for tests ----
