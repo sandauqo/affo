@@ -157,6 +157,22 @@ trait PlayerActions {
 	function actSetAutoPassAction( $action_type ) {
 		$this->setAutoPassAction($action_type);
 	}
+
+	function actSetSimultaneousPhases( $choice ) {
+		if (!$this->isSimultaneousPhasesEnabled()) {
+			throw new BgaUserException(clienttranslate("This feature is not available"));
+		}
+		self::checkAction('setSimultaneousPhases');
+		if ($this->gamestate->state()['name'] !== 'income-placegoods') {
+			throw new BgaUserException(clienttranslate("This choice is only available during income"));
+		}
+		if (!in_array($choice, ['enable', 'disable'], true)) {
+			throw new BgaUserException(clienttranslate("Invalid choice"));
+		}
+
+		$round = $choice === 'enable' ? (int) $this->getGameStateValue('round') : null;
+		FfoPlayer::setSimultaneousPhasesRound(self::getCurrentPlayerId(), $round);
+	}
 	
 	function actSaveBoards( $request ) {
 		$this->saveBoards($request);

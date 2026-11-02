@@ -20,6 +20,8 @@ include "modules/helper.easter-egg.php";
 
 class FeastForOdin extends Table
 {
+	private const SIMULTANEOUS_PHASES_ENABLED = false;
+
 	use StateFunctions;
 	use StateArguments;
 	use PlayerActions;
@@ -204,6 +206,10 @@ class FeastForOdin extends Table
 		$value = $this->getGameStateValue('autopassable_phases');
 		if ($value == 1) return true;
 		return false;
+	}
+
+	public function isSimultaneousPhasesEnabled() {
+		return self::SIMULTANEOUS_PHASES_ENABLED;
 	}
 
 	public function isYuleExpansion() {
@@ -1049,10 +1055,15 @@ class FeastForOdin extends Table
 				"harvest_expansion" => $this->hasMiniExpansion2(),
 				"confirm_timer" => $this->isConfirmTimer(),
 				"yule_expansion" => $this->isYuleExpansion(),
+				"simultaneous_phases" => $this->isSimultaneousPhasesEnabled(),
 			],
 			"custom_harvest" => $custom_harvest,
 			"custom_harvest_debug" => $this->getString('custom_harvest'),
 		];
+
+		if ($this->isSimultaneousPhasesEnabled() && isset($players[$current_player_id])) {
+			$data["simultaneous_phases_round"] = FfoPlayer::getSimultaneousPhasesRound($current_player_id);
+		}
 
 		if ($this->isNorwegiansExpansion()) {
 			$data["num_vp_token_4"] = $this->getGameStateValue('num_vp_token_4');

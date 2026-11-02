@@ -88,6 +88,7 @@ function (
 			this.onSelectGoods = action.onSelectGoods.bind(this);
 			this.onSaveBoards = action.onSaveBoards.bind(this);
 			this.onSaveBoardsAndPass = action.onSaveBoardsAndPass.bind(this);
+			this.onSetSimultaneousPhases = action.onSetSimultaneousPhases.bind(this);
 			this.onSaveFeastBoardsAndPass = action.onSaveFeastBoardsAndPass.bind(this);
 			this.onCancelBoards = action.onCancelBoards.bind(this);
 			this.onBuyShip = action.onBuyShip.bind(this);

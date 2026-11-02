@@ -213,6 +213,13 @@ class action_feastforodin extends APP_GameAction
     self::ajaxResponse();
   }
 
+  public function setSimultaneousPhases() {
+    self::setAjaxMode();
+    $choice = self::getArg("choice", AT_alphanum, true);
+    $this->game->actSetSimultaneousPhases($choice);
+    self::ajaxResponse();
+  }
+
   public function equipBoard() {
     self::setAjaxMode();
     

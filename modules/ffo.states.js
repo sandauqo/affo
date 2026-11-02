@@ -974,6 +974,10 @@ console.log(JSON.stringify(player.playerObj.occupationsHand));
 				case 'bonus-placegoods':
 					this.addActionButton( 'placement_pass_button', _('Done'), 'onPassCheck' );
 					this.addActionButton( 'save_and_done_button', _('Save and done'), 'onSaveBoardsAndPass' );
+					if (stateName === 'income-placegoods' && this.gamedatas.options.simultaneous_phases) {
+						const selected = Number(this.gamedatas.simultaneous_phases_round) === Number(this.gamedatas.round);
+						this.addActionButton('simultaneous_phases_button', selected ? _('Cancel combined feast and bonus') : _('Plan feast and bonus together'), 'onSetSimultaneousPhases');
+					}
 					this.updatePlacementButtons();
 					break;
 				case 'gameEnd-placegoods':

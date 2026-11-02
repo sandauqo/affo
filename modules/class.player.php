@@ -914,6 +914,26 @@ class FfoPlayer {
 		return json_decode($player['extra'], true)['autopass'];
 	}
 
+	public static function getSimultaneousPhasesRound($player_id) {
+		$player = FeastForOdin::GetObject("SELECT extra FROM player WHERE player_id = $player_id");
+		if (!$player['extra']) {
+			return null;
+		}
+
+		$extra = json_decode($player['extra'], true, 512, JSON_THROW_ON_ERROR);
+		return $extra['simultaneous_phases_round'] ?? null;
+	}
+
+	public static function setSimultaneousPhasesRound($player_id, $round) {
+		$player = FeastForOdin::GetObject("SELECT extra FROM player WHERE player_id = $player_id");
+		$extra = $player['extra']
+			? json_decode($player['extra'], true, 512, JSON_THROW_ON_ERROR)
+			: self::getExtraDefault();
+		$extra['simultaneous_phases_round'] = $round;
+		$encoded = FeastForOdin::escapeStringForDB(json_encode($extra, JSON_THROW_ON_ERROR));
+		FeastForOdin::DbQuery("UPDATE player SET extra = '$encoded' WHERE player_id = $player_id");
+	}
+
 	public static function setAutoPassAction($player_id, $action_type) {
 		
 		$player = FeastForOdin::GetObject("SELECT extra FROM player WHERE player_id = $player_id");

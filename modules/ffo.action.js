@@ -1269,6 +1269,28 @@
 		
 		this.onSaveBoards(event, null, null, { pass: true });
 	}
+
+	function onSetSimultaneousPhases(event) {
+		dojo.stopEvent(event);
+		if (!this.checkAction('setSimultaneousPhases')) return;
+
+		const selected = Number(this.gamedatas.simultaneous_phases_round) === Number(this.gamedatas.round);
+		const message = selected
+			? _('Cancel your choice to plan feast and bonus together this round?')
+			: _('Choose to plan feast and bonus together this round? For now this only saves your choice; it does not change the phase flow or pass for you.');
+		this.confirmationDialog(message, () => {
+			this.ajaxcall("/feastforodin/feastforodin/setSimultaneousPhases.html", {
+				lock: true,
+				choice: selected ? 'disable' : 'enable',
+			}, this, () => {
+				this.gamedatas.simultaneous_phases_round = selected ? null : Number(this.gamedatas.round);
+				const button = $('simultaneous_phases_button');
+				if (button) {
+					button.innerHTML = selected ? _('Plan feast and bonus together') : _('Cancel combined feast and bonus');
+				}
+			}, function(is_error) {});
+		});
+	}
 	
 	function onSaveBoardsAndPassEndGame(event) {
 		dojo.stopEvent( event );
@@ -1615,5 +1637,5 @@
 		);
 	}
 
-	define({ onAction, onPass, onPassCheck, onPassFeastCheck, onPassEndGameCheck, onTopTrayClick, onSelectMode, onAffirm, onDeclareFailure, onReroll, onSelectGoods, onDeclareSuccess, onSaveBoards, onCancelBoards, onBuyShip, onEquipShip, onUseOccupation, onPassVikings, onSaveBoardsAndPass, onSaveFeastBoardsAndPass, onSaveBoardsAndPassEndGame, onUndo, onEquipBoard, onChooseVikingsNumber, onSelectForSlaughter, onClickResource, onSelectResources, onFlipArtisanShed, onDiscardOccupation, onSelectWeapons, onClickWeapon, onClickOnceTwiceUpgradeGood, onClickGoodUnique, sendUseOccupationFromModal, onSelectModeAjax, onPlayOccupation, onGoBack, onSetAutoPassAction, onSelectPersonalResource, onDrawPersonalResource, onChooseBestOfTwoStartingOcc, onSelectBestOfTwoStartingOcc, onBuildArtisanShed, onSelectArtisanShed });
+	define({ onAction, onPass, onPassCheck, onPassFeastCheck, onPassEndGameCheck, onTopTrayClick, onSelectMode, onAffirm, onDeclareFailure, onReroll, onSelectGoods, onDeclareSuccess, onSaveBoards, onCancelBoards, onBuyShip, onEquipShip, onUseOccupation, onPassVikings, onSaveBoardsAndPass, onSetSimultaneousPhases, onSaveFeastBoardsAndPass, onSaveBoardsAndPassEndGame, onUndo, onEquipBoard, onChooseVikingsNumber, onSelectForSlaughter, onClickResource, onSelectResources, onFlipArtisanShed, onDiscardOccupation, onSelectWeapons, onClickWeapon, onClickOnceTwiceUpgradeGood, onClickGoodUnique, sendUseOccupationFromModal, onSelectModeAjax, onPlayOccupation, onGoBack, onSetAutoPassAction, onSelectPersonalResource, onDrawPersonalResource, onChooseBestOfTwoStartingOcc, onSelectBestOfTwoStartingOcc, onBuildArtisanShed, onSelectArtisanShed });
 })();

@@ -310,7 +310,7 @@ $machinestates = [
 		"descriptionmyturn" => clienttranslate('${you} may place goods on your boards before receiving income'),
 		"action" => "stPreIncome",
 		"type" => "multipleactiveplayer",
-		"possibleactions" => [ "pass" ],
+		"possibleactions" => [ "pass", "setSimultaneousPhases" ],
 		"transitions" => [ "pass" => 83 ],
 	],
 	
