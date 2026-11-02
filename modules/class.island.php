@@ -2,43 +2,47 @@
 
 class Island {
 	public static function setup($game, $players) {
-		$sql = "INSERT INTO available_islands (
-			code, name, coins
-		) VALUES ";
-		
-		$islands = array();
-		
+		$originalAB = [
+			['A', 'shetland'],
+			['B', 'faroeislands'],
+		];
+		$originalCD = [
+			['C', 'iceland'],
+			['D', 'greenland'],
+		];
+
 		if (FeastForOdin::$game->isNorwegiansExpansion()) {
-			$islands[] = "('A', 'isleofman', 0)";
-			$islands[] = "('B', 'isleofskye', 0)";
-			$islands[] = "('C', 'outerhebrides', 0)";
-			$islands[] = "('D', 'islay', 0)";
-			if (count($players) == 3 || FeastForOdin::$game->isNorwegiansAllIslands()) {
-				$islands[] = "('A', 'shetland', 0)";
-				$islands[] = "('B', 'faroeislands', 0)";
-			}
+			$islands = [
+				['A', 'isleofman'],
+				['B', 'isleofskye'],
+				['C', 'outerhebrides'],
+				['D', 'islay'],
+			];
 			if (count($players) == 4 || FeastForOdin::$game->isNorwegiansAllIslands()) {
-				$islands[] = "('C', 'iceland', 0)";
-				$islands[] = "('D', 'greenland', 0)";
+				$islands = array_merge($islands, $originalAB, $originalCD);
+			} else if (count($players) == 3) {
+				$islands[] = $originalAB[bga_rand(0, 1)];
+				$islands[] = $originalCD[bga_rand(0, 1)];
 			}
 		} else {
-			$islands[] = "('A', 'shetland', 0)";
-			$islands[] = "('B', 'faroeislands', 0)";
-			$islands[] = "('C', 'iceland', 0)";
-			$islands[] = "('D', 'greenland', 0)";
+			$islands = array_merge($originalAB, $originalCD);
 		}
 
 		if ($game->hasMiniExpansion1()) {
-			$islands[] = "('A', 'lofoten', 0)";
-			$islands[] = "(NULL, 'tierradelfuego', 0)";
+			$islands[] = ['A', 'lofoten'];
+			$islands[] = [null, 'tierradelfuego'];
 		}
 
 		if ($game->hasMiniExpansion2()) {
-			$islands[] = "('B', 'isleofmull', 0)";
+			$islands[] = ['B', 'isleofmull'];
 		}
-		
-		$sql .= implode(',', $islands);
-		FeastForOdin::DbQuery( $sql );
+
+		$values = [];
+		foreach ($islands as [$code, $name]) {
+			$sqlCode = $code === null ? 'NULL' : "'$code'";
+			$values[] = "($sqlCode, '$name', 0)";
+		}
+		FeastForOdin::DbQuery("INSERT INTO available_islands (code, name, coins) VALUES " . implode(',', $values));
 	}
 	
 	public static function getAvailable() {
@@ -53,25 +57,17 @@ class Island {
 	public static function flip($code) {
 		// Add 2 coins to all islands
 		FeastForOdin::DbQuery( "UPDATE available_islands SET coins = coins + 2 WHERE 1" );
-		
-		// Flip the code (and set coins to 0)
-		if ($code == 'A') {
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'bearisland' WHERE name = 'shetland'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'orkney' WHERE name = 'lofoten'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'limerick' WHERE name = 'isleofman'" );
-		}
-		else if ($code == 'B') {
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'baffinisland' WHERE name = 'faroeislands'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'wexford' WHERE name = 'isleofskye'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'caithness' WHERE name = 'isleofmull'" );
-		}
-		else if ($code == 'C') {
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'labrador' WHERE name = 'iceland'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'cork' WHERE name = 'outerhebrides'" );
-		}
-		else if ($code == 'D') {
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'newfoundland' WHERE name = 'greenland'" );
-			FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = 'waterford' WHERE name = 'islay'" );
+
+		$flips = [
+			'A' => ['shetland' => 'bearisland', 'lofoten' => 'orkney', 'isleofman' => 'limerick'],
+			'B' => ['faroeislands' => 'baffinisland', 'isleofskye' => 'wexford', 'isleofmull' => 'caithness'],
+			'C' => ['iceland' => 'labrador', 'outerhebrides' => 'cork'],
+			'D' => ['greenland' => 'newfoundland', 'islay' => 'waterford'],
+		];
+		if (isset($flips[$code])) {
+			foreach ($flips[$code] as $front => $back) {
+				FeastForOdin::DbQuery( "UPDATE available_islands SET coins = 0, code = NULL, `name` = '$back' WHERE name = '$front'" );
+			}
 		}
 	}
 	
